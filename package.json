@@ -1,0 +1,60 @@
+{
+  "name": "proxy-watcher",
+  "description": "A function that recursively watches an object for mutations via Proxies and tells you which paths changed.",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "benchmark": "node tasks/benchmark.js",
+    "bench": "matcha tasks/bench.js",
+    "clean:dist": "rimraf dist",
+    "clean:coverage": "rimraf coverage .nyc_output",
+    "clean": "npm run clean:dist && npm run clean:coverage",
+    "compile": "tsc --skipLibCheck && tstei",
+    "compile:watch": "tsc --skipLibCheck --watch",
+    "test": "ava",
+    "test:watch": "ava --watch",
+    "coverage": "nyc --reporter=html ava",
+    "report": "nyc report",
+    "report:html": "open coverage/index.html",
+    "prepublishOnly": "npm run clean && npm run compile && npm run coverage"
+  },
+  "ava": {
+    "files": [
+      "test/index.js"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/fabiospampinato/proxy-watcher/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Fabio Spampinato",
+    "email": "spampinabio@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fabiospampinato/proxy-watcher.git"
+  },
+  "keywords": [
+    "proxy",
+    "watcher",
+    "watch",
+    "change"
+  ],
+  "dependencies": {
+    "is-primitive": "^3.0.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.1",
+    "ava": "^2.4.0",
+    "ava-spec": "^1.1.1",
+    "benchloop": "^1.3.1",
+    "nyc": "^15.0.0",
+    "on-change": "^1.6.2",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.7.5",
+    "typescript-transform-export-interop": "^1.0.2"
+  }
+}
