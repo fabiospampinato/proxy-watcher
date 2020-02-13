@@ -9,17 +9,21 @@ import {$TARGET, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './
 
 const Utils = {
 
-  isEqual: _.isEqual,
+  isEqual: ( x: any, y: any ): boolean => {
 
-  cloneCustomizer: <T> ( value: T ): T | undefined => {
-
-    if ( !isPrimitive ( value ) && Utils.isTypedArray ( value ) ) return ( value[$TARGET] || value ).slice (); //FIXME: https://github.com/lodash/lodash/issues/4646
+    return isPrimitive ( x ) || isPrimitive ( y ) ? Object.is ( x, y ) : _.isEqual ( x, y );
 
   },
 
   clone: <T> ( x: T ): T => _.cloneWith ( x, Utils.cloneCustomizer ),
 
   cloneDeep: <T> ( x: T ): T => _.cloneDeepWith ( x, Utils.cloneCustomizer ),
+
+  cloneCustomizer: <T> ( value: T ): T | undefined => {
+
+    if ( !isPrimitive ( value ) && Utils.isTypedArray ( value ) ) return ( value[$TARGET] || value ).slice (); //FIXME: https://github.com/lodash/lodash/issues/4646
+
+  },
 
   isFunction: ( x: any ): x is Function => {
 

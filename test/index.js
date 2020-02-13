@@ -153,6 +153,26 @@ describe ( 'Proxy Watcher', it => {
 
   });
 
+  it ( 'assignment are also checked for equality', t => {
+
+    const obj = {
+      deep: {
+        deeper: true
+      }
+    };
+
+    const data = makeData ( obj );
+
+    data.proxy.deep = { deeper: true };
+    data.proxy.deep = { deeper: true };
+    Object.defineProperty ( data.proxy, 'deep', Object.getOwnPropertyDescriptor ( data.proxy, 'deep' ) );
+    Object.defineProperty ( data.proxy, 'deep2', { configurable: true, value: { deeper: true } } );
+    Object.defineProperty ( data.proxy, 'deep2', { configurable: true, value: { deeper: true } } );
+
+    t.is ( data.nr, 1 );
+
+  });
+
   it ( 'returns a disposer', t => {
 
     const obj = {
@@ -207,8 +227,8 @@ describe ( 'Proxy Watcher', it => {
       data.proxy.bar = { deep: true };
       data.proxy.bar = { deep: true };
 
-      t.is ( data.nr, 5 );
-      t.deepEqual ( data.paths, ['bar', 'bar', 'bar'] );
+      t.is ( data.nr, 3 );
+      t.deepEqual ( data.paths, ['bar'] );
 
       data.proxy.bar.deep = undefined;
       data.proxy.baz = undefined;
@@ -216,21 +236,21 @@ describe ( 'Proxy Watcher', it => {
       delete data.proxy.bar.deep;
       delete data.proxy.bar;
 
-      t.is ( data.nr, 9 );
+      t.is ( data.nr, 7 );
       t.deepEqual ( data.paths, ['bar.deep', 'baz', 'bar.deep', 'bar'] );
 
       Object.defineProperty ( data.proxy, 'bar', { value: 2 });
       Object.defineProperty ( data.proxy, 'bar', { value: 2 });
 
-      t.is ( data.nr, 11 );
-      t.deepEqual ( data.paths, ['bar', 'bar'] );
+      t.is ( data.nr, 8 );
+      t.deepEqual ( data.paths, ['bar'] );
 
       t.true ( data.proxy.hasOwnProperty ( 'foo' ) );
       t.true ( 'foo' in data.proxy );
       t.false ( data.proxy.hasOwnProperty ( 'qux' ) );
       t.false ( 'qux' in data.proxy );
 
-      t.is ( data.nr, 11 );
+      t.is ( data.nr, 8 );
 
     });
 
@@ -383,14 +403,13 @@ describe ( 'Proxy Watcher', it => {
       data.proxy.new.str = new String ( 'string' );
       data.proxy.new.nr = new Number ( 123 );
 
-      t.is ( data.nr, 7 );
-      t.deepEqual ( data.paths, ['new.bool', 'new.str', 'new.nr'] );
+      t.is ( data.nr, 4 );
 
       data.proxy.new.bool = true;
       data.proxy.new.str = 'string';
       data.proxy.new.nr = 123;
 
-      t.is ( data.nr, 10 );
+      t.is ( data.nr, 7 );
       t.deepEqual ( data.paths, ['new.bool', 'new.str', 'new.nr'] );
 
       delete data.proxy.fn.bool;
@@ -400,7 +419,7 @@ describe ( 'Proxy Watcher', it => {
       delete data.proxy.new.str;
       delete data.proxy.new.nr;
 
-      t.is ( data.nr, 16 );
+      t.is ( data.nr, 13 );
       t.deepEqual ( data.paths, ['fn.bool', 'fn.str', 'fn.nr', 'new.bool', 'new.str', 'new.nr'] );
 
     });

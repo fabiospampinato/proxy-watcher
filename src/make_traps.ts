@@ -130,7 +130,7 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
             didPropertyExist = isValueUndefined && Reflect.has ( target, property ),
             prev = Reflect.get ( target, property, receiver ),
             result = Reflect.set ( target, property, value ),
-            changed = result && ( ( isValueUndefined && !didPropertyExist ) || !Object.is ( prev, value ) );
+            changed = result && ( ( isValueUndefined && !didPropertyExist ) || !Utils.isEqual ( prev, value ) );
 
       return changed ? triggerChange ( result, getChildPath ( target, property ) ) : result;
 
@@ -138,9 +138,18 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
     defineProperty: wrapTrap (( target, property, descriptor ) => {
 
-      const changed = Reflect.defineProperty ( target, property, descriptor );
+      if ( stopped || Utils.isSymbol ( property ) ) return Reflect.defineProperty ( target, property, descriptor );
 
-      if ( stopped || Utils.isSymbol ( property ) ) return changed;
+      const prev = Reflect.getOwnPropertyDescriptor ( target, property ),
+            changed = Reflect.defineProperty ( target, property, descriptor );
+
+      if ( changed ) {
+
+        const next = { configurable: false, enumerable: false, writable: false, ...descriptor }; // Accounting for defaults
+
+        if ( Utils.isEqual ( prev, next ) ) return true;
+
+      }
 
       return changed ? triggerChange ( changed, getChildPath ( target, property ) ) : changed;
 
