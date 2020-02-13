@@ -11,13 +11,15 @@ const Utils = {
 
   isEqual: _.isEqual,
 
-  clone: <T> ( x: T ): T => {
+  cloneCustomizer: <T> ( value: T ): T | undefined => {
 
-    return _.cloneWith ( x, value => {
-      if ( !isPrimitive ( value ) && Utils.isTypedArray ( value ) ) return ( value[$TARGET] || value ).slice (); //FIXME: https://github.com/lodash/lodash/issues/4646
-    });
+    if ( !isPrimitive ( value ) && Utils.isTypedArray ( value ) ) return ( value[$TARGET] || value ).slice (); //FIXME: https://github.com/lodash/lodash/issues/4646
 
   },
+
+  clone: <T> ( x: T ): T => _.cloneWith ( x, Utils.cloneCustomizer ),
+
+  cloneDeep: <T> ( x: T ): T => _.cloneDeepWith ( x, Utils.cloneCustomizer ),
 
   isFunction: ( x: any ): x is Function => {
 
