@@ -108,7 +108,7 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
       if ( descriptor && !descriptor.configurable && !descriptor.writable ) return value; // Preserving invariants
 
-      if ( stopped ) return value;
+      if ( stopped || Utils.isSymbol ( property ) ) return value;
 
       if ( Utils.isFunction ( value ) && Utils.isStrictlyImmutableMethod ( target, value ) ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
 

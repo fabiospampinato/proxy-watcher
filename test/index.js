@@ -138,6 +138,21 @@ describe ( 'Proxy Watcher', it => {
 
   });
 
+  it ( 'watching mutations nested inside symbols aren\'t detected', t => {
+
+    const symbol = Symbol (),
+          data = makeData ({ [symbol]: { unreachable: true } });
+
+    t.true ( data.proxy[symbol].unreachable );
+
+    data.proxy[symbol].unreachable = false;;
+
+    t.false ( data.proxy[symbol].unreachable );
+
+    t.is ( data.nr, 0 );
+
+  });
+
   it ( 'returns a disposer', t => {
 
     const obj = {
