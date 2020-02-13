@@ -11,6 +11,7 @@ It supports [primitives](https://developer.mozilla.org/en-US/docs/Glossary/Primi
 - Mutations happening at locations that need to be reached via a [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) aren't detected, as a precise string path for them can't be generated (e.g. `{ [Symbol ()]: { unreachableViaStringPath: true }`).
 - Proxys will make certain operations even 100x slower on current engines, however those operations are simple things like property accesses which will almost never be your actual bottleneck, even with this performance hit.
 - Proxys are un-polyfillable, if you have to support platforms that don't [support them](https://caniuse.com/#search=proxy) you can't use this library.
+- It's possible that the callback will be called when nothing actually changed (e.g. if will happen to flip a boolean twice synchronously).
 
 ## Install
 
