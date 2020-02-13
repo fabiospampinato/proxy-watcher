@@ -18,7 +18,6 @@ const STRICTLY_IMMUTABLE_METHODS = new Set ([ // These methods don't directly mu
   'toString',
   'valueOf',
   /* ARRAY */
-  'concat',
   'includes',
   'indexOf',
   'join',
@@ -57,6 +56,7 @@ const STRICTLY_IMMUTABLE_METHODS = new Set ([ // These methods don't directly mu
 
 const LOOSELY_IMMUTABLE_METHODS = { // These methods don't directly mutate the object but could return something that may cause a mutation
   array: new Set ([
+    'concat',
     'entries',
     'every',
     'filter',
