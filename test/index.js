@@ -4,6 +4,7 @@
 import * as _ from 'lodash';
 import {describe} from 'ava-spec';
 import watch from '../dist';
+import {$GET_RECORD_START, $GET_RECORD_STOP} from '../dist/consts';
 
 /* HELPERS */
 
@@ -170,6 +171,25 @@ describe ( 'Proxy Watcher', it => {
     Object.defineProperty ( data.proxy, 'deep2', { configurable: true, value: { deeper: true } } );
 
     t.is ( data.nr, 1 );
+
+  });
+
+  it ( 'can record get root paths', t => {
+
+    const data = makeData ({
+      deep: {
+        arr: [1, 2, { foo: true }, { zzz: true }]
+      }
+    });
+
+    t.true ( data.proxy[$GET_RECORD_START] );
+
+    data.proxy.deep.arr[0] = 1;
+    data.proxy.deep.arr[1] = 2;
+    data.proxy.deep.arr[2].foo = true;
+    data.proxy.deep.arr[2].bar;
+
+    t.deepEqual ( data.proxy[$GET_RECORD_STOP], ['deep', 'deep', 'deep', 'deep'] );
 
   });
 

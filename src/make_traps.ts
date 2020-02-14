@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import {PROXY_CACHE, $TARGET, $STOP} from './consts';
+import {PROXY_CACHE, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
 import makeProxy from './make_proxy';
 import Utils from './utils';
 import {Callback, Trap, Traps} from './types';
@@ -15,6 +15,8 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
   let stopped = false,
       changed = false,
       changedPaths: string[] = [],
+      getPathsRecording = false,
+      getPaths: string[] = [],
       paths = new WeakMap<object, string> ();
 
   /* HELPERS */
@@ -98,7 +100,22 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
       }
 
+      if ( property === $GET_RECORD_START ) return getPathsRecording = true;
+
+      if ( property === $GET_RECORD_STOP ) {
+
+        const paths = getPaths;
+
+        getPathsRecording = false;
+        getPaths = [];
+
+        return paths;
+
+      }
+
       if ( Utils.isBuiltinWithMutableMethods ( receiver ) ) receiver = receiver[$TARGET];
+
+      if ( getPathsRecording && !getParentPath ( target ) ) getPaths.push ( property ); // We are only recording root paths, because I don't see a use case for recording deeper paths too
 
       const value = Reflect.get ( target, property, receiver );
 
