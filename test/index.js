@@ -811,7 +811,6 @@ describe ( 'Proxy Watcher', it => {
     it ( 'promise', async t => {
 
       const data = makeData ({
-        error: Promise.reject (), //TODO
         string: Promise.resolve ( 'string' ),
         number: Promise.resolve ( 123 ),
         arr: Promise.resolve ([ 1, 2, 3 ]),
