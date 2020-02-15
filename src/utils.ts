@@ -43,6 +43,12 @@ const Utils = {
 
   },
 
+  isBuiltinUnsupported: ( x: any ): boolean => {
+
+    return x instanceof Promise || x instanceof WeakMap || x instanceof WeakSet;
+
+  },
+
   isBuiltinWithoutMutableMethods: ( x: any ): boolean => {
 
     return isPrimitive ( x ) || x instanceof RegExp || x instanceof ArrayBuffer || x instanceof Number || x instanceof Boolean || x instanceof String;

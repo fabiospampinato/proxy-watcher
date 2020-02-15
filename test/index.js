@@ -737,6 +737,26 @@ describe ( 'Proxy Watcher', it => {
 
     });
 
+    it ( 'weakmap', t => {
+
+      const data = makeData ({ weakmap: new WeakMap () });
+
+      t.is ( data.proxy.weakmap.constructor.name, 'WeakMap' );
+
+      data.proxy.weakmap.has ( 'foo' );
+
+      t.is ( data.nr, 0 );
+
+      data.proxy.weakmap = data.proxy.weakmap;
+
+      t.is ( data.nr, 0 );
+
+      data.proxy.weakmap = new WeakMap ();
+
+      t.is ( data.nr, 1 );
+
+    });
+
     it ( 'set', t => {
 
       const data = makeData ({ set: new Set ([ 1, 2 ]) });
@@ -765,6 +785,78 @@ describe ( 'Proxy Watcher', it => {
 
       t.is ( data.nr, 3 );
       t.deepEqual ( data.paths, ['set', 'set', 'set'] );
+
+    });
+
+    it ( 'weakset', t => {
+
+      const data = makeData ({ weakset: new WeakSet () });
+
+      t.is ( data.proxy.weakset.constructor.name, 'WeakSet' );
+
+      data.proxy.weakset.has ( 'foo' );
+
+      t.is ( data.nr, 0 );
+
+      data.proxy.weakset = data.proxy.weakset;
+
+      t.is ( data.nr, 0 );
+
+      data.proxy.weakset = new WeakSet ();
+
+      t.is ( data.nr, 1 );
+
+    });
+
+    it ( 'promise', async t => {
+
+      const data = makeData ({
+        error: Promise.reject (), //TODO
+        string: Promise.resolve ( 'string' ),
+        number: Promise.resolve ( 123 ),
+        arr: Promise.resolve ([ 1, 2, 3 ]),
+        obj: Promise.resolve ({ foo: true }),
+        set: Promise.resolve ( new Set ([ 1, 2, 3 ]) ),
+        deep: Promise.resolve ( Promise.resolve ({ deep: true }) ),
+      });
+
+      t.is ( await data.proxy.string, 'string' );
+      t.is ( await data.proxy.number, 123 );
+      t.deepEqual ( await data.proxy.arr, [1, 2, 3] );
+      t.deepEqual ( await data.proxy.obj, { foo: true } );
+      t.deepEqual ( await data.proxy.set, new Set ([ 1, 2, 3 ]) );
+      t.deepEqual ( await data.proxy.deep, { deep: true } );
+      t.is ( data.nr, 0 );
+
+      data.proxy.string = data.proxy.string;
+      data.proxy.number = data.proxy.number;
+      data.proxy.arr = data.proxy.arr;
+      data.proxy.obj = data.proxy.obj;
+      data.proxy.set = data.proxy.set;
+      data.proxy.deep = data.proxy.deep;
+      t.is ( data.nr, 0 );
+
+      data.proxy.arr.then ( arr => arr[0] = 1 );
+      data.proxy.obj.then ( obj => obj.foo = true );
+      data.proxy.set.then ( set => set.delete ( 4 ) );
+      data.proxy.set.then ( set => set.has ( 4 ) );
+      data.proxy.deep.then ( obj => obj.deep = true );
+      t.is ( data.nr, 0 );
+
+      data.proxy.string = Promise.resolve ( 'string' );
+      data.proxy.number = Promise.resolve ( 123 );
+      data.proxy.arr = Promise.resolve ([ 1, 2, 3 ]);
+      data.proxy.obj = Promise.resolve ({ foo: true });
+      data.proxy.set = Promise.resolve ( new Set ([ 1, 2, 3 ]) );
+      data.proxy.deep = Promise.resolve ( Promise.resolve ({ deep: true }) );
+      t.is ( data.nr, 6 );
+
+      // data.proxy.arr.then ( arr => arr[0] = 2 );
+      // data.proxy.arr.then ( arr => arr.push ( 4 ) );
+      // data.proxy.obj.then ( obj => obj.foo = false );
+      // data.proxy.set.then ( set => set.delete ( 1 ) );
+      // data.proxy.deep.then ( obj => obj.deep = false );
+      // t.is ( data.nr, 11 ); //TODO: Detect changes happening inside promises
 
     });
 
