@@ -3,7 +3,7 @@
 
 import * as _ from 'lodash'; //TODO: Replace lodash with something lighter
 import * as isPrimitive from 'is-primitive';
-import {$TARGET, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
+import {$TARGET, SUPPORTS_BIGINT_TYPED_ARRAY, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
 
 /* UTILS */
 
@@ -39,7 +39,7 @@ const Utils = {
 
   isTypedArray: ( x: any ): boolean => {
 
-    return x instanceof Int8Array || x instanceof Uint8Array || x instanceof Uint8ClampedArray || x instanceof Int16Array || x instanceof Uint16Array || x instanceof Int32Array || x instanceof Uint32Array || x instanceof Float32Array || x instanceof Float64Array || x instanceof BigInt64Array || x instanceof BigUint64Array;
+    return x instanceof Int8Array || x instanceof Uint8Array || x instanceof Uint8ClampedArray || x instanceof Int16Array || x instanceof Uint16Array || x instanceof Int32Array || x instanceof Uint32Array || x instanceof Float32Array || x instanceof Float64Array || ( SUPPORTS_BIGINT_TYPED_ARRAY && ( x instanceof BigInt64Array || x instanceof BigUint64Array ) );
 
   },
 

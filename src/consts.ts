@@ -11,6 +11,8 @@ const $GET_RECORD_START = Symbol ( 'Start recording get paths' );
 
 const $GET_RECORD_STOP = Symbol ( 'Stop recording get paths' );
 
+const SUPPORTS_BIGINT_TYPED_ARRAY = ( typeof BigInt64Array === 'function' );
+
 // We are assuming the following immutable methods don't get messed up with, and custom methods with the same name that are mutating are not defined
 
 const STRICTLY_IMMUTABLE_METHODS = new Set ([ // These methods don't directly mutate the object and don't return something that may cause a mutation
@@ -87,4 +89,4 @@ const LOOSELY_IMMUTABLE_METHODS = { // These methods don't directly mutate the o
 
 /* EXPORT */
 
-export {PROXY_CACHE, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS};
+export {PROXY_CACHE, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP, SUPPORTS_BIGINT_TYPED_ARRAY, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS};
