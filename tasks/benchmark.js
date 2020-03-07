@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-const {default: watch} = require ( '../dist' ),
+const {watch} = require ( '../dist' ),
       {NOOP, OBJ} = require ( './fixtures' ),
       benchmark = require ( 'benchloop' );
 

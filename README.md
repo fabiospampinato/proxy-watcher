@@ -37,7 +37,7 @@ Basically you have to pass the `watch` function an object, which will be watched
 The function will return an array containing a proxy object, always use this object rather than the raw object you pass the `watch` function, and a disposer function, which when called will stop the watching operation and will return back the original unproxied object.
 
 ```ts
-import watch from 'proxy-watcher';
+import {watch} from 'proxy-watcher';
 
 const [proxy, dispose] = watch ({
   foo: true,

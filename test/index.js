@@ -3,7 +3,7 @@
 
 import * as _ from 'lodash';
 import {describe} from 'ava-spec';
-import watch from '../dist';
+import {watch} from '../dist';
 import {$GET_RECORD_START, $GET_RECORD_STOP} from '../dist/consts';
 
 /* HELPERS */
