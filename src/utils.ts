@@ -3,7 +3,7 @@
 
 import * as _ from 'lodash'; //TODO: Replace lodash with something lighter
 import * as isPrimitive from 'is-primitive';
-import {$TARGET, SUPPORTS_BIGINT_TYPED_ARRAY, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
+import {$TARGET, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_TYPED_ARRAY, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
 
 /* UTILS */
 
@@ -21,7 +21,13 @@ const Utils = {
 
   cloneCustomizer: <T> ( value: T ): T | undefined => {
 
-    if ( !isPrimitive ( value ) && Utils.isTypedArray ( value ) ) return ( value[$TARGET] || value ).slice (); //FIXME: https://github.com/lodash/lodash/issues/4646
+    if ( Utils.isTypedArray ( value ) ) return ( value[$TARGET] || value ).slice (); //FIXME: https://github.com/lodash/lodash/issues/4646
+
+  },
+
+  isArray: ( x: any ): x is Array<any> => {
+
+    return Array.isArray ( x );
 
   },
 
@@ -33,31 +39,31 @@ const Utils = {
 
   isSymbol: ( x: any ): x is symbol => {
 
-    return typeof x === 'symbol'
+    return typeof x === 'symbol';
 
   },
 
   isTypedArray: ( x: any ): boolean => {
 
-    return x instanceof Int8Array || x instanceof Uint8Array || x instanceof Uint8ClampedArray || x instanceof Int16Array || x instanceof Uint16Array || x instanceof Int32Array || x instanceof Uint32Array || x instanceof Float32Array || x instanceof Float64Array || ( SUPPORTS_BIGINT_TYPED_ARRAY && ( x instanceof BigInt64Array || x instanceof BigUint64Array ) );
+    return !isPrimitive ( x ) && CONSTRUCTORS_TYPED_ARRAY.has ( x.constructor );
 
   },
 
   isBuiltinUnsupported: ( x: any ): boolean => {
 
-    return x instanceof Promise || x instanceof WeakMap || x instanceof WeakSet;
+    return !isPrimitive ( x ) && CONSTRUCTORS_UNSUPPORTED.has ( x.constructor );
 
   },
 
   isBuiltinWithoutMutableMethods: ( x: any ): boolean => {
 
-    return isPrimitive ( x ) || x instanceof RegExp || x instanceof ArrayBuffer || x instanceof Number || x instanceof Boolean || x instanceof String;
+    return isPrimitive ( x ) || CONSTRUCTORS_IMMUTABLE.has ( x.constructor );
 
   },
 
   isBuiltinWithMutableMethods: ( x: any ): boolean => {
 
-    return !isPrimitive ( x ) && ( x instanceof Date || x instanceof Map || x instanceof Set || Utils.isTypedArray ( x ) ); // "Array" should be included this, but then some tests will fail
+    return !isPrimitive ( x ) && CONSTRUCTORS_MUTABLE.has ( x.constructor );
 
   },
 
@@ -77,7 +83,7 @@ const Utils = {
 
     if ( !name ) return false;
 
-    if ( Array.isArray ( target ) ) return LOOSELY_IMMUTABLE_METHODS.array.has ( name );
+    if ( Utils.isArray ( target ) ) return LOOSELY_IMMUTABLE_METHODS.array.has ( name );
 
     // return LOOSELY_IMMUTABLE_METHODS.others.has ( name ); // For some reason mutations generated via these methods from Map or Set objects don't get detected
 
