@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-const {watch} = require ( '../dist' ),
+const {watch, unwatch, record} = require ( '../dist' ),
       {NOOP, OBJ} = require ( './fixtures' ),
       benchmark = require ( 'benchloop' );
 
@@ -10,6 +10,28 @@ const {watch} = require ( '../dist' ),
 benchmark.defaultOptions = Object.assign ( benchmark.defaultOptions, {
   iterations: 500,
   log: 'compact'
+});
+
+benchmark ({
+  name: 'record',
+  beforeEach: ctx => {
+    ctx.proxy = watch ( OBJ (), NOOP )[0];
+  },
+  fn: ctx => {
+    record ( ctx.proxy, () => {
+      ctx.proxy.obj.deep.deeper;
+    });
+  }
+});
+
+benchmark ({
+  name: 'unwatch',
+  beforeEach: ctx => {
+    ctx.proxy = watch ( OBJ (), NOOP )[0];
+  },
+  fn: ctx => {
+    unwatch ( ctx.proxy );
+  }
 });
 
 benchmark.group ( 'watch', () => {
