@@ -2,6 +2,7 @@
 /* IMPORT */
 
 import * as _ from 'lodash'; //TODO: Replace lodash with something lighter
+import * as isEqual from 'fast-deep-equal/es6';
 import * as isPrimitive from 'is-primitive';
 import {$TARGET, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_TYPED_ARRAY, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
 
@@ -11,7 +12,7 @@ const Utils = {
 
   isEqual: ( x: any, y: any ): boolean => {
 
-    return isPrimitive ( x ) || isPrimitive ( y ) ? Object.is ( x, y ) : _.isEqual ( x, y );
+    return ( isPrimitive ( x ) || isPrimitive ( y ) || CONSTRUCTORS_UNSUPPORTED.has ( x.constructor ) || CONSTRUCTORS_UNSUPPORTED.has ( y.constructor ) ) ? Object.is ( x, y ) : isEqual ( x ,y );
 
   },
 
