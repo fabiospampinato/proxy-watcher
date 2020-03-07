@@ -86,6 +86,8 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
     get: wrapTrap (( target, property, receiver ) => {
 
+      if ( property === 'constructor' ) return Reflect.get ( target, property, receiver );
+
       if ( property === $TARGET ) return target;
 
       if ( property === $STOP ) {
@@ -119,7 +121,7 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
       const value = Reflect.get ( target, property, receiver );
 
-      if ( Utils.isBuiltinWithoutMutableMethods ( value ) || property === 'constructor' ) return value;
+      if ( Utils.isBuiltinWithoutMutableMethods ( value ) ) return value;
 
       const descriptor = Reflect.getOwnPropertyDescriptor ( target, property );
 
