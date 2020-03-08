@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-const {watch, unwatch, record} = require ( '../dist' ),
+const {watch, unwatch, record, target} = require ( '../dist' ),
       {NOOP, OBJ} = require ( './fixtures' ),
       benchmark = require ( 'benchloop' );
 
@@ -21,6 +21,16 @@ benchmark ({
     record ( ctx.proxy, () => {
       ctx.proxy.obj.deep.deeper;
     });
+  }
+});
+
+benchmark ({
+  name: 'target',
+  beforeEach: ctx => {
+    ctx.proxy = watch ( OBJ (), NOOP )[0];
+  },
+  fn: ctx => {
+    target ( ctx.proxy );
   }
 });
 
