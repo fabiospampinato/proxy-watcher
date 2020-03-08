@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import * as _ from 'lodash'; //TODO: Replace lodash with something lighter
+import * as clone from 'shallow-clone';
 import * as isEqual from 'fast-deep-equal/es6';
 import * as isPrimitive from 'is-primitive';
 import {$TARGET, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_TYPED_ARRAY, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
@@ -12,17 +12,37 @@ const Utils = {
 
   isEqual: ( x: any, y: any ): boolean => {
 
-    return ( isPrimitive ( x ) || isPrimitive ( y ) || CONSTRUCTORS_UNSUPPORTED.has ( x.constructor ) || CONSTRUCTORS_UNSUPPORTED.has ( y.constructor ) ) ? Object.is ( x, y ) : isEqual ( x ,y );
+    return ( isPrimitive ( x ) || isPrimitive ( y ) || CONSTRUCTORS_UNSUPPORTED.has ( x.constructor ) || CONSTRUCTORS_UNSUPPORTED.has ( y.constructor ) ) ? Object.is ( x, y ) : isEqual ( x ,y ); //FIXME: https://github.com/epoberezkin/fast-deep-equal/issues/53
 
   },
 
-  clone: <T> ( x: T ): T => _.cloneWith ( x, Utils.cloneCustomizer ),
+  clone: <T> ( x: T ): T => {
 
-  cloneDeep: <T> ( x: T ): T => _.cloneDeepWith ( x, Utils.cloneCustomizer ),
+    if ( isPrimitive ( x ) ) return x;
 
-  cloneCustomizer: <T> ( value: T ): T | undefined => {
+    if ( x instanceof Map ) {
 
-    if ( Utils.isTypedArray ( value ) ) return ( value[$TARGET] || value ).slice (); //FIXME: https://github.com/lodash/lodash/issues/4646
+      const y = new Map ();
+
+      for ( const [key, value] of x ) y.set ( clone ( key ), clone ( value ) );
+
+      return y as typeof x;
+
+    }
+
+    if ( x instanceof Set ) {
+
+      const y = new Set ();
+
+      for ( const value of x ) y.add ( clone ( value ) );
+
+      return y as typeof x;
+
+    }
+
+    if ( Utils.isTypedArray ( x ) ) return ( x[$TARGET] || x ).slice ();
+
+    return clone ( x );
 
   },
 
