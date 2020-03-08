@@ -86,7 +86,7 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
     get: wrapTrap (( target, property, receiver ) => {
 
-      if ( property === 'constructor' ) return Reflect.get ( target, property, receiver );
+      if ( property === 'constructor' ) return target.constructor;
 
       if ( property === $TARGET ) return target;
 

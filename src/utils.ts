@@ -46,12 +46,6 @@ const Utils = {
 
   },
 
-  isArray: ( x: any ): x is Array<any> => {
-
-    return Array.isArray ( x );
-
-  },
-
   isFunction: ( x: any ): x is Function => {
 
     return typeof x === 'function';
@@ -90,21 +84,13 @@ const Utils = {
 
   isStrictlyImmutableMethod: ( target: any, method: Function ): boolean => { //TODO: Maybe perform "instanceof" checks, for correctness
 
-    const {name} = method;
-
-    if ( !name ) return false;
-
-    return STRICTLY_IMMUTABLE_METHODS.has ( name );
+    return STRICTLY_IMMUTABLE_METHODS.has ( method.name );
 
   },
 
   isLooselyImmutableMethod: ( target: any, method: Function ): boolean => {
 
-    const {name} = method;
-
-    if ( !name ) return false;
-
-    if ( Utils.isArray ( target ) ) return LOOSELY_IMMUTABLE_METHODS.array.has ( name );
+    if ( Array.isArray ( target ) ) return LOOSELY_IMMUTABLE_METHODS.array.has ( method.name );
 
     // return LOOSELY_IMMUTABLE_METHODS.others.has ( name ); // For some reason mutations generated via these methods from Map or Set objects don't get detected
 
