@@ -38,12 +38,6 @@ const Utils = {
 
   },
 
-  isUndefined: ( x: any ): x is undefined => {
-
-    return x === undefined;
-
-  },
-
   isSymbol: ( x: any ): x is symbol => {
 
     return typeof x === 'symbol';
