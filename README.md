@@ -64,6 +64,10 @@ record ( proxy, () => {
   console.log ( proxy.foo );
 }); // => ['foo']
 
+/* TARGET */ // Return the raw unproxied object
+
+target ( proxy ); // => { foo: false, bar = true, arr: [1, 2, 3, 4] }
+
 /* UNWATCH */
 
 dispose (); // Stop watching

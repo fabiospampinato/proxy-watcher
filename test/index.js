@@ -3,7 +3,7 @@
 
 import * as _ from 'lodash';
 import {describe} from 'ava-spec';
-import {watch, unwatch, record} from '../dist';
+import {watch, unwatch, record, target} from '../dist';
 
 /* HELPERS */
 
@@ -919,6 +919,20 @@ describe ( 'Proxy Watcher', () => {
       });
 
       t.deepEqual ( paths, ['deep', 'deep', 'deep', 'deep'] );
+
+    });
+
+  });
+
+  describe ( 'target', it => {
+
+    it ( 'retrieves the row unproxied object', t => {
+
+      const obj = { foo: true },
+            data = makeData ( obj );
+
+      t.not ( data.proxy, obj );
+      t.is ( target ( data.proxy ), obj );
 
     });
 
