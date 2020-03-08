@@ -5,11 +5,11 @@ import {$GET_RECORD_START, $GET_RECORD_STOP} from './consts';
 
 /* RECORD */
 
-function record<Object> ( proxy: Object, fn: () => void ): string[] {
+function record<Object> ( proxy: Object, fn: ( proxy: Object ) => void ): string[] {
 
   proxy[$GET_RECORD_START];
 
-  fn ();
+  fn ( proxy );
 
   return proxy[$GET_RECORD_STOP];
 
