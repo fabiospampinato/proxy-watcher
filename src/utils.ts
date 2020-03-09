@@ -4,7 +4,7 @@
 import * as clone from 'shallow-clone';
 import * as isEqual from 'fast-deep-equal/es6';
 import * as isPrimitive from 'is-primitive';
-import {$TARGET, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_TYPED_ARRAY, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
+import {CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_TYPED_ARRAY, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
 
 /* UTILS */
 
@@ -26,7 +26,7 @@ const Utils = {
 
       for ( const [key, value] of x ) y.set ( clone ( key ), clone ( value ) );
 
-      return y as typeof x;
+      return y as typeof x; //TSC
 
     }
 
@@ -36,11 +36,11 @@ const Utils = {
 
       for ( const value of x ) y.add ( clone ( value ) );
 
-      return y as typeof x;
+      return y as typeof x; //TSC
 
     }
 
-    if ( Utils.isTypedArray ( x ) ) return ( x[$TARGET] || x ).slice ();
+    if ( Utils.isTypedArray ( x ) ) return x.slice () as typeof x; //TSC
 
     return clone ( x );
 
@@ -58,7 +58,7 @@ const Utils = {
 
   },
 
-  isTypedArray: ( x: any ): boolean => {
+  isTypedArray: ( x: any ): x is Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array | BigInt64Array | BigUint64Array => {
 
     return !isPrimitive ( x ) && CONSTRUCTORS_TYPED_ARRAY.has ( x.constructor );
 
@@ -82,19 +82,15 @@ const Utils = {
 
   },
 
-  isStrictlyImmutableMethod: ( target: any, method: Function ): boolean => { //TODO: Maybe perform "instanceof" checks, for correctness
+  isStrictlyImmutableMethod: ( method: Function ): boolean => { //TODO: Maybe perform "instanceof" checks, for correctness
 
     return STRICTLY_IMMUTABLE_METHODS.has ( method.name );
 
   },
 
-  isLooselyImmutableMethod: ( target: any, method: Function ): boolean => {
+  isLooselyImmutableArrayMethod: ( method: Function ): boolean => { // It assumes `target` is an array
 
-    if ( Array.isArray ( target ) ) return LOOSELY_IMMUTABLE_METHODS.array.has ( method.name );
-
-    // return LOOSELY_IMMUTABLE_METHODS.others.has ( name ); // For some reason mutations generated via these methods from Map or Set objects don't get detected
-
-    return false;
+    return LOOSELY_IMMUTABLE_METHODS.array.has ( method.name );
 
   }
 

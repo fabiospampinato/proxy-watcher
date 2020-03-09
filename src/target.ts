@@ -7,9 +7,7 @@ import {$TARGET} from './consts';
 
 function target<Object> ( object: Object ): Object {
 
-  if ( object == null ) return object;
-
-  return object[$TARGET] || object;
+  return object && ( object[$TARGET] || object );
 
 }
 

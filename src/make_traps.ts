@@ -130,7 +130,7 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
       if ( stopped || Utils.isSymbol ( property ) || Utils.isBuiltinUnsupported ( value ) ) return value;
 
-      if ( Utils.isFunction ( value ) && Utils.isStrictlyImmutableMethod ( target, value ) ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
+      if ( Utils.isFunction ( value ) && Utils.isStrictlyImmutableMethod ( value ) ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
 
       setChildPath ( target, value, property );
 
@@ -140,17 +140,17 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
     set: wrapTrap (( target, property, value, receiver ) => {
 
-      if ( value && value[$TARGET] ) value = value[$TARGET];
-
-      if ( Utils.isBuiltinWithMutableMethods ( receiver ) ) receiver = receiver[$TARGET];
+      value = getTarget ( value );
 
       if ( stopped || Utils.isSymbol ( property ) ) return Reflect.set ( target, property, value );
+
+      if ( Utils.isBuiltinWithMutableMethods ( receiver ) ) receiver = receiver[$TARGET];
 
       const isValueUndefined = ( value === undefined ),
             didPropertyExist = isValueUndefined && Reflect.has ( target, property ),
             prev = Reflect.get ( target, property, receiver ),
             result = Reflect.set ( target, property, value ),
-            changed = result && ( ( isValueUndefined && !didPropertyExist ) || !Utils.isEqual ( prev, value ) );
+            changed = result && ( ( isValueUndefined && !didPropertyExist ) || !Utils.isEqual ( getTarget ( prev ), value ) );
 
       return changed ? triggerChange ( result, getChildPath ( target, property ) ) : result;
 
@@ -189,15 +189,18 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
     apply: wrapTrap (( target, thisArg, args ) => {
 
-      if ( Utils.isBuiltinWithMutableMethods ( thisArg ) ) thisArg = thisArg[$TARGET];
+      const isArray = Array.isArray ( thisArg );
 
-      if ( stopped || Utils.isLooselyImmutableMethod ( thisArg, target ) ) return Reflect.apply ( target, thisArg, args );
+      if ( !isArray ) thisArg = thisArg[$TARGET];
 
-      const clone = Utils.clone ( getTarget ( thisArg ) ),
+      if ( stopped || ( isArray && Utils.isLooselyImmutableArrayMethod ( target ) ) ) return Reflect.apply ( target, thisArg, args );
+
+      const thisArgTarget = ( isArray ? thisArg[$TARGET] : thisArg ),
+            clone = Utils.clone ( thisArgTarget ),
             result = Reflect.apply ( target, thisArg, args ),
-            changed = !Utils.isEqual ( clone, getTarget ( thisArg ) );
+            changed = !Utils.isEqual ( clone, thisArgTarget );
 
-      return changed ? triggerChange ( result, getParentPath ( thisArg[$TARGET] || thisArg ) ) : result; //FIXME: Why do we need to retrieve the path this way (for arrays)?
+      return changed ? triggerChange ( result, getParentPath ( thisArgTarget ) ) : result;
 
     })
 
