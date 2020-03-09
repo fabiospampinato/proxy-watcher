@@ -1,7 +1,7 @@
 {
   "name": "proxy-watcher",
   "description": "A function that recursively watches an object for mutations via Proxies and tells you which paths changed.",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
