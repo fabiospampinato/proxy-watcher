@@ -3,6 +3,7 @@
 
 import {PROXY_CACHE, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
 import makeProxy from './make_proxy';
+import getTarget from './target';
 import Utils from './utils';
 import {Callback, Trap, Traps} from './types';
 
@@ -192,9 +193,9 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
       if ( stopped || Utils.isLooselyImmutableMethod ( thisArg, target ) ) return Reflect.apply ( target, thisArg, args );
 
-      const clone = Utils.clone ( thisArg ),
+      const clone = Utils.clone ( getTarget ( thisArg ) ),
             result = Reflect.apply ( target, thisArg, args ),
-            changed = !Utils.isEqual ( clone, thisArg );
+            changed = !Utils.isEqual ( clone, getTarget ( thisArg ) );
 
       return changed ? triggerChange ( result, getParentPath ( thisArg[$TARGET] || thisArg ) ) : result; //FIXME: Why do we need to retrieve the path this way (for arrays)?
 

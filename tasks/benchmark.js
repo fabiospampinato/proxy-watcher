@@ -8,7 +8,7 @@ const {watch, unwatch, record, target} = require ( '../dist' ),
 /* BENCHMARK */
 
 benchmark.defaultOptions = Object.assign ( benchmark.defaultOptions, {
-  iterations: 500,
+  iterations: 750,
   log: 'compact'
 });
 
