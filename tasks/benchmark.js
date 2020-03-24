@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-const {watch, unwatch, record, target} = require ( '../dist' ),
+const {watch, unwatch, record, target, isProxy} = require ( '../dist' ),
       {NOOP, OBJ} = require ( './fixtures' ),
       benchmark = require ( 'benchloop' );
 
@@ -42,6 +42,24 @@ benchmark ({
   fn: ctx => {
     unwatch ( ctx.proxy );
   }
+});
+
+benchmark.group ( 'isProxy', () => {
+
+  benchmark ({
+    name: 'raw',
+    fn: () => {
+      isProxy ( OBJ );
+    }
+  });
+
+  benchmark ({
+    name: 'proxy',
+    fn: ctx => {
+      isProxy ( ctx.proxy );
+    }
+  });
+
 });
 
 benchmark.group ( 'watch', () => {

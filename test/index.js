@@ -3,7 +3,7 @@
 
 import * as _ from 'lodash';
 import {describe} from 'ava-spec';
-import {watch, unwatch, record, target} from '../dist';
+import {watch, unwatch, record, target, isProxy} from '../dist';
 
 /* HELPERS */
 
@@ -933,6 +933,44 @@ describe ( 'Proxy Watcher', () => {
 
       t.not ( data.proxy, obj );
       t.is ( target ( data.proxy ), obj );
+
+    });
+
+  });
+
+  describe ( 'isProxy', it => {
+
+    it ( 'checks if the passed object is a proxy', t => {
+
+      const obj = { foo: true },
+            data = makeData ( obj );
+
+      t.false ( isProxy ( obj ) );
+      t.false ( isProxy ( target ( data.proxy ) ) );
+      t.true ( isProxy ( data.proxy ) );
+
+    });
+
+    it ( 'using immutable ~primitives doesn\'t throw an error', t => {
+
+      const values = [
+        null,
+        undefined,
+        123,
+        123n,
+        NaN,
+        true,
+        false,
+        'string',
+        Symbol (),
+        /foo/g,
+        new ArrayBuffer ( 123 ),
+        new Number ( 123 ),
+        new Boolean ( true ),
+        new String ( 'string' )
+      ];
+
+      values.forEach ( value => t.false ( isProxy ( value ) ) );
 
     });
 

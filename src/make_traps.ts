@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import {PROXY_CACHE, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
+import {PROXY_CACHE, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
 import makeProxy from './make_proxy';
 import getTarget from './target';
 import Utils from './utils';
@@ -115,6 +115,8 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
         return paths;
 
       }
+
+      if ( property === $IS_PROXY ) return true;
 
       if ( Utils.isBuiltinWithMutableMethods ( receiver ) ) receiver = receiver[$TARGET];
 
