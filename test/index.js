@@ -901,7 +901,7 @@ describe ( 'Proxy Watcher', () => {
 
   describe ( 'record', it => {
 
-    it ( 'can record get root paths', t => {
+    it ( 'can record get root paths of a single proxy', t => {
 
       const data = makeData ({
         deep: {
@@ -909,7 +909,9 @@ describe ( 'Proxy Watcher', () => {
         }
       });
 
-      const paths = record ( data.proxy, () => {
+      const paths = record ( data.proxy, proxy => {
+
+        t.is ( data.proxy, proxy );
 
         data.proxy.deep.arr[0] = 1;
         data.proxy.deep.arr[1] = 2;
@@ -919,6 +921,44 @@ describe ( 'Proxy Watcher', () => {
       });
 
       t.deepEqual ( paths, ['deep', 'deep', 'deep', 'deep'] );
+
+    });
+
+    it ( 'can record get root paths of multiple proxies', t => {
+
+      const data1 = makeData ({
+        foo: 123
+      });
+
+      const data2 = makeData ({
+        deep: {
+          arr: [1, 2, { foo: true }, { zzz: true }]
+        }
+      });
+
+      const data3 = makeData ({
+        bar: true
+      });
+
+      const pathsMap = record ( [data1.proxy, data2.proxy, data3.proxy], ( proxy1, proxy2, proxy3 ) => {
+
+        t.is ( data1.proxy, proxy1 );
+        t.is ( data2.proxy, proxy2 );
+        t.is ( data3.proxy, proxy3 );
+
+        proxy1.foo;
+
+        proxy2.deep.arr[0] = 1;
+        proxy2.deep.arr[1] = 2;
+        proxy2.deep.arr[2].foo = true;
+        proxy2.deep.arr[2].bar;
+
+      });
+
+      t.is ( pathsMap.size, 3 );
+      t.deepEqual ( pathsMap.get ( data1.proxy ), ['foo'] );
+      t.deepEqual ( pathsMap.get ( data2.proxy ), ['deep', 'deep', 'deep', 'deep'] );
+      t.deepEqual ( pathsMap.get ( data3.proxy ), [] );
 
     });
 

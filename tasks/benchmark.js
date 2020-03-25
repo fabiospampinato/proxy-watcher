@@ -12,16 +12,34 @@ benchmark.defaultOptions = Object.assign ( benchmark.defaultOptions, {
   log: 'compact'
 });
 
-benchmark ({
-  name: 'record',
-  beforeEach: ctx => {
-    ctx.proxy = watch ( OBJ (), NOOP )[0];
-  },
-  fn: ctx => {
-    record ( ctx.proxy, () => {
-      ctx.proxy.obj.deep.deeper;
-    });
-  }
+
+benchmark.group ( 'record', () => {
+
+  benchmark ({
+    name: 'single',
+    beforeEach: ctx => {
+      ctx.proxy = watch ( OBJ (), NOOP )[0];
+    },
+    fn: ctx => {
+      record ( ctx.proxy, () => {
+        ctx.proxy.obj.deep.deeper;
+      });
+    }
+  });
+
+  benchmark ({
+    name: 'multiple',
+    beforeEach: ctx => {
+      ctx.proxy1 = watch ( OBJ (), NOOP )[0];
+      ctx.proxy2 = watch ( OBJ (), NOOP )[0];
+    },
+    fn: ctx => {
+      record ( [ctx.proxy1, ctx.proxy2], () => {
+        ctx.proxy1.obj.deep.deeper;
+      });
+    }
+  });
+
 });
 
 benchmark ({

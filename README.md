@@ -12,7 +12,7 @@ The following functions are provided.
 
 - **watch**: starts watching an object for mutations, and returns a proxy object.
 - **unwatch**: stops watching an object for mutations, and returns the raw object being proxied.
-- **record**: records and returns an array of root paths that have been accessed while executing the provided function.
+- **record**: records and returns an array or map of root paths that have been accessed while executing the provided function.
 - **target**: returns the raw object being proxied.
 - **isProxy**: returns a boolean indicating if the provided object is a proxy object or not.
 
@@ -40,6 +40,7 @@ type Disposer = () => void;
 function watch ( object: Object, callback: ( paths: string[] ) => any ): [Proxy, Disposer];
 function unwatch ( proxy: Proxy ): Object;
 function record ( proxy: Proxy, fn: ( proxy: Proxy ) => void ): string[];
+function record ( proxies: Proxy[], fn: ( ...proxies: Proxy[] ) => void ): Map<Proxy, string[]>;
 function target ( proxy: Proxy ): Object;
 function isProxy ( object: Object | Proxy ): boolean;
 ```
