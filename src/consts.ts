@@ -1,8 +1,4 @@
 
-/* CACHES */
-
-const PROXY_CACHE: Record<symbol, WeakMap<object, object>> = {}; //FIXME: This looks like a potential memory leak source, symbols and associated maps are never garbage collected if the watched objects get garbage collected without being disposed of first
-
 /* SYMBOLS */
 
 const $IS_PROXY = Symbol ( 'Is Proxy' );
@@ -152,4 +148,4 @@ const LOOSELY_IMMUTABLE_METHODS = { // These methods don't directly mutate the o
 
 /* EXPORT */
 
-export {PROXY_CACHE, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_TYPED_ARRAY, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS};
+export {$IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_TYPED_ARRAY, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS};

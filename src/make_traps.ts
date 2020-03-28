@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import {PROXY_CACHE, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
+import {$IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
 import makeProxy from './make_proxy';
 import getTarget from './target';
 import Utils from './utils';
@@ -9,7 +9,7 @@ import {Callback, Trap, Traps} from './types';
 
 /* MAKE TRAPS */
 
-function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
+function makeTraps ( callback: Callback ): Traps {
 
   /* VARIABLES */
 
@@ -18,7 +18,8 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
       changedPaths: string[] = [],
       getPathsRecording = false,
       getPaths: string[] = [],
-      paths = new WeakMap<object, string> ();
+      paths = new WeakMap<object, string> (),
+      proxies = new WeakMap<object, object> ();
 
   /* HELPERS */
 
@@ -97,8 +98,6 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
         changedPaths = undefined as any; //TSC
         paths = undefined as any; //TSC
 
-        delete PROXY_CACHE[$PROXY];
-
         return target;
 
       }
@@ -136,7 +135,15 @@ function makeTraps ( callback: Callback, $PROXY: symbol ): Traps {
 
       setChildPath ( target, value, property );
 
-      return makeProxy ( value, callback, $PROXY, traps );
+      const proxyCached = proxies.get ( value );
+
+      if ( proxyCached ) return proxyCached;
+
+      const proxy = makeProxy ( value, callback, traps );
+
+      proxies.set ( value, proxy );
+
+      return proxy;
 
     }),
 

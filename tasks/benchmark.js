@@ -105,8 +105,11 @@ benchmark.group ( 'watch', () => {
 
   benchmark ({
     name: 'deep',
-    fn: () => {
-      watch ( OBJ (), NOOP );
+    beforeEach: ctx => {
+      ctx.obj = OBJ ();
+    },
+    fn: ctx => {
+      watch ( ctx.obj, NOOP );
     }
   });
 
