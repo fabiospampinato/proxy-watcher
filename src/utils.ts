@@ -1,50 +1,18 @@
 
 /* IMPORT */
 
-import * as clone from 'shallow-clone';
-import * as isEqual from 'fast-deep-equal/es6';
 import * as isPrimitive from 'is-primitive';
 import {CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_TYPED_ARRAY, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
+import clone from './packages/clone';
+import isEqual from './packages/is_equal';
 
 /* UTILS */
 
 const Utils = {
 
-  isEqual: ( x: any, y: any ): boolean => {
+  clone,
 
-    return ( isPrimitive ( x ) || isPrimitive ( y ) || CONSTRUCTORS_UNSUPPORTED.has ( x.constructor ) || CONSTRUCTORS_UNSUPPORTED.has ( y.constructor ) ) ? Object.is ( x, y ) : isEqual ( x ,y ); //FIXME: https://github.com/epoberezkin/fast-deep-equal/issues/53
-
-  },
-
-  clone: <T> ( x: T ): T => {
-
-    if ( isPrimitive ( x ) ) return x;
-
-    if ( x instanceof Map ) {
-
-      const y = new Map ();
-
-      for ( const [key, value] of x ) y.set ( clone ( key ), clone ( value ) );
-
-      return y as typeof x; //TSC
-
-    }
-
-    if ( x instanceof Set ) {
-
-      const y = new Set ();
-
-      for ( const value of x ) y.add ( clone ( value ) );
-
-      return y as typeof x; //TSC
-
-    }
-
-    if ( Utils.isTypedArray ( x ) ) return x.slice () as typeof x; //TSC
-
-    return clone ( x );
-
-  },
+  isEqual,
 
   isFunction: ( x: any ): x is Function => {
 
