@@ -129,9 +129,9 @@ function makeTraps ( callback: Callback ): Traps {
 
       if ( descriptor && !descriptor.configurable && !descriptor.writable ) return value; // Preserving invariants
 
-      if ( stopped || Utils.isSymbol ( property ) || Utils.isBuiltinUnsupported ( value ) ) return value;
+      if ( stopped || typeof property === 'symbol' || Utils.isObjectUnsupported ( value ) ) return value;
 
-      if ( Utils.isFunction ( value ) && Utils.isStrictlyImmutableMethod ( value ) ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
+      if ( typeof value === 'function' && Utils.isStrictlyImmutableMethod ( value ) ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
 
       setChildPath ( target, value, property );
 
@@ -151,7 +151,7 @@ function makeTraps ( callback: Callback ): Traps {
 
       value = getTarget ( value );
 
-      if ( stopped || Utils.isSymbol ( property ) ) return Reflect.set ( target, property, value );
+      if ( stopped || typeof property === 'symbol' ) return Reflect.set ( target, property, value );
 
       if ( Utils.isBuiltinWithMutableMethods ( receiver ) ) receiver = receiver[$TARGET];
 
@@ -167,7 +167,7 @@ function makeTraps ( callback: Callback ): Traps {
 
     defineProperty: wrapTrap (( target, property, descriptor ) => {
 
-      if ( stopped || Utils.isSymbol ( property ) ) return Reflect.defineProperty ( target, property, descriptor );
+      if ( stopped || typeof property === 'symbol' ) return Reflect.defineProperty ( target, property, descriptor );
 
       const prev = Reflect.getOwnPropertyDescriptor ( target, property ),
             changed = Reflect.defineProperty ( target, property, descriptor );
@@ -190,7 +190,7 @@ function makeTraps ( callback: Callback ): Traps {
 
       const changed = Reflect.deleteProperty ( target, property );
 
-      if ( stopped || Utils.isSymbol ( property ) ) return changed;
+      if ( stopped || typeof property === 'symbol' ) return changed;
 
       return changed ? triggerChange ( changed, getChildPath ( target, property ) ) : changed;
 

@@ -38,18 +38,6 @@ const CONSTRUCTORS_MUTABLE = new Set<Function> ([ // "Array" should be included 
   Float64Array
 ]);
 
-const CONSTRUCTORS_TYPED_ARRAY = new Set<Function> ([
-  Int8Array,
-  Uint8Array,
-  Uint8ClampedArray,
-  Int16Array,
-  Uint16Array,
-  Int32Array,
-  Uint32Array,
-  Float32Array,
-  Float64Array
-]);
-
 const CONSTRUCTORS_UNSUPPORTED = new Set<Function> ([
   Promise,
   WeakMap,
@@ -79,13 +67,11 @@ if ( typeof BigInt === 'function' ) {
 
   if ( typeof BigInt64Array === 'function' ) {
     CONSTRUCTORS_MUTABLE.add ( BigInt64Array );
-    CONSTRUCTORS_TYPED_ARRAY.add ( BigInt64Array );
     CONSTRUCTORS_COMPARABLE.add ( BigInt64Array );
   }
 
   if ( typeof BigUint64Array === 'function' ) {
     CONSTRUCTORS_MUTABLE.add ( BigUint64Array );
-    CONSTRUCTORS_TYPED_ARRAY.add ( BigUint64Array );
     CONSTRUCTORS_COMPARABLE.add ( BigUint64Array );
   }
 
@@ -167,4 +153,4 @@ const LOOSELY_IMMUTABLE_METHODS = { // These methods don't directly mutate the o
 
 /* EXPORT */
 
-export {$IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_TYPED_ARRAY, CONSTRUCTORS_UNSUPPORTED, CONSTRUCTORS_COMPARABLE, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS};
+export {$IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_UNSUPPORTED, CONSTRUCTORS_COMPARABLE, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS};
