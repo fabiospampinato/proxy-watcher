@@ -92,16 +92,6 @@ function makeTraps ( callback: Callback ): Traps {
 
       if ( property === $TARGET ) return target;
 
-      if ( property === $STOP ) {
-
-        stopped = true;
-        changedPaths = undefined as any; //TSC
-        paths = undefined as any; //TSC
-
-        return target;
-
-      }
-
       if ( property === $GET_RECORD_START ) return getPathsRecording = true;
 
       if ( property === $GET_RECORD_STOP ) {
@@ -116,6 +106,16 @@ function makeTraps ( callback: Callback ): Traps {
       }
 
       if ( property === $IS_PROXY ) return true;
+
+      if ( property === $STOP ) {
+
+        stopped = true;
+        changedPaths = undefined as any; //TSC
+        paths = undefined as any; //TSC
+
+        return target;
+
+      }
 
       if ( Utils.isBuiltinWithMutableMethods ( receiver ) ) receiver = receiver[$TARGET];
 

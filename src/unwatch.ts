@@ -7,9 +7,7 @@ import {$STOP} from './consts';
 
 function unwatch<Object> ( object: Object ): Object {
 
-  if ( object == null ) return object;
-
-  return object[$STOP] || object;
+  return object && ( object[$STOP] || object );
 
 }
 

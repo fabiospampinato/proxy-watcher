@@ -8,7 +8,7 @@ const {watch, unwatch, record, target, isProxy} = require ( '../dist' ),
 /* BENCHMARK */
 
 benchmark.defaultOptions = Object.assign ( benchmark.defaultOptions, {
-  iterations: 750,
+  iterations: 1000,
   log: 'compact'
 });
 
@@ -330,178 +330,182 @@ benchmark.group ( 'get', () => {
 
 });
 
-benchmark.group ( 'set:no', () => {
+benchmark.group ( 'set', () => {
 
-  benchmark ({
-    name: 'object:shallow',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.arr[0] = 1;
-    }
+  benchmark.group ( 'no', () => {
+
+    benchmark ({
+      name: 'object:shallow',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr[0] = 1;
+      }
+    });
+
+    benchmark ({
+      name: 'object:deep',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.obj.deep.deeper = true;
+      }
+    });
+
+    benchmark ({
+      name: 'date',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.date.setDate ( ctx.proxy.date.getDate () );
+      }
+    });
+
+    benchmark ({
+      name: 'regex',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.re.lastIndex = ctx.proxy.re.lastIndex;
+      }
+    });
+
+    benchmark ({
+      name: 'array',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.copyWithin ( 0, 0, 0 );
+        ctx.proxy.arr.push ();
+        ctx.proxy.arr.splice ( 0, 0 );
+      }
+    });
+
+    benchmark ({
+      name: 'map',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.map.delete ( 'none' );
+        ctx.proxy.map.set ( '1', 1 );
+      }
+    });
+
+    benchmark ({
+      name: 'set',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.set.delete ( 'none' );
+        ctx.proxy.set.add ( 1 );
+      }
+    });
+
   });
 
-  benchmark ({
-    name: 'object:deep',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.obj.deep.deeper = true;
-    }
-  });
+  benchmark.group ( 'yes', () => {
 
-  benchmark ({
-    name: 'date',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.date.setDate ( ctx.proxy.date.getDate () );
-    }
-  });
+    benchmark ({
+      name: 'object:shallow',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr[0] = 10;
+        ctx.proxy.obj.foo = 10;
+      }
+    });
 
-  benchmark ({
-    name: 'regex',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.re.lastIndex = ctx.proxy.re.lastIndex;
-    }
-  });
+    benchmark ({
+      name: 'object:deep',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr[3].undefined = 10;
+        ctx.proxy.obj.deep.deeper = 10;
+      }
+    });
 
-  benchmark ({
-    name: 'array',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.arr.copyWithin ( 0, 0, 0 );
-      ctx.proxy.arr.push ();
-      ctx.proxy.arr.splice ( 0, 0 );
-    }
-  });
+    benchmark ({
+      name: 'date',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.date.setDate ( ctx.proxy.date.getDate () % 2 + 1 );
+      }
+    });
 
-  benchmark ({
-    name: 'map',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.map.delete ( 'none' );
-      ctx.proxy.map.set ( '1', 1 );
-    }
-  });
+    benchmark ({
+      name: 'regex',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.re.lastIndex = -1;
+      }
+    });
 
-  benchmark ({
-    name: 'set',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.set.delete ( 'none' );
-      ctx.proxy.set.add ( 1 );
-    }
-  });
+    benchmark ({
+      name: 'function',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.fn.displayName = 'Name';
+      }
+    });
 
-});
+    benchmark ({
+      name: 'array',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.copyWithin ( 0, 1, 2 );
+        ctx.proxy.arr.fill ( 0 );
+        ctx.proxy.arr.pop ();
+        ctx.proxy.arr.push ( -1, -2, -3 );
+        ctx.proxy.arr.reverse ();
+        ctx.proxy.arr.shift ();
+        ctx.proxy.arr.sort ();
+        ctx.proxy.arr.splice ( 0, 1, 2 );
+        ctx.proxy.arr.unshift ( 5 );
+      }
+    });
 
-benchmark.group ( 'set:yes', () => {
+    benchmark ({
+      name: 'map',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.map.delete ( '1' );
+        ctx.proxy.map.clear ();
+        ctx.proxy.map.set ( '4', 4 );
+      }
+    });
 
-  benchmark ({
-    name: 'object:shallow',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.arr[0] = 10;
-      ctx.proxy.obj.foo = 10;
-    }
-  });
+    benchmark ({
+      name: 'set',
+      beforeEach: ctx => {
+        ctx.proxy = watch ( OBJ (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.set.add ( 3 );
+        ctx.proxy.set.delete ( 1 );
+        ctx.proxy.set.clear ();
+      }
+    });
 
-  benchmark ({
-    name: 'object:deep',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.arr[3].undefined = 10;
-      ctx.proxy.obj.deep.deeper = 10;
-    }
-  });
-
-  benchmark ({
-    name: 'date',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.date.setDate ( ctx.proxy.date.getDate () % 2 + 1 );
-    }
-  });
-
-  benchmark ({
-    name: 'regex',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.re.lastIndex = -1;
-    }
-  });
-
-  benchmark ({
-    name: 'function',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.fn.displayName = 'Name';
-    }
-  });
-
-  benchmark ({
-    name: 'array',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.arr.copyWithin ( 0, 1, 2 );
-      ctx.proxy.arr.fill ( 0 );
-      ctx.proxy.arr.pop ();
-      ctx.proxy.arr.push ( -1, -2, -3 );
-      ctx.proxy.arr.reverse ();
-      ctx.proxy.arr.shift ();
-      ctx.proxy.arr.sort ();
-      ctx.proxy.arr.splice ( 0, 1, 2 );
-      ctx.proxy.arr.unshift ( 5 );
-    }
-  });
-
-  benchmark ({
-    name: 'map',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.map.delete ( '1' );
-      ctx.proxy.map.clear ();
-      ctx.proxy.map.set ( '4', 4 );
-    }
-  });
-
-  benchmark ({
-    name: 'set',
-    beforeEach: ctx => {
-      ctx.proxy = watch ( OBJ (), NOOP )[0];
-    },
-    fn: ctx => {
-      ctx.proxy.set.add ( 3 );
-      ctx.proxy.set.delete ( 1 );
-      ctx.proxy.set.clear ();
-    }
   });
 
 });

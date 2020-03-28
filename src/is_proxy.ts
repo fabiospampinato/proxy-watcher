@@ -8,9 +8,7 @@ import {$IS_PROXY} from './consts';
 
 function isProxy<Object> ( object: Object ): boolean {
 
-  if ( object == null ) return false;
-
-  return object[$IS_PROXY] === true;
+  return !!object && ( object[$IS_PROXY] === true );
 
 }
 
