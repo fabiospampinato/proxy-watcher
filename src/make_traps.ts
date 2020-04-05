@@ -49,7 +49,7 @@ function makeTraps<Object> ( object: Object, callback: Callback ): Traps {
 
     if ( child !== object ) return;
 
-    throw new Error ( `A reference to the whole watched object has been found at path "${paths.get ( child )}", this is unsupported.` );
+    throw new Error ( `A reference to the whole watched object has been found at path "${paths.get ( child )}", this is not supported.` );
 
   }
 

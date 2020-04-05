@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 import {describe} from 'ava-spec';
 import {watch, unwatch, record, target, isProxy} from '../dist';
 import * as Consts from '../dist/consts';
+import Utils from '../dist/utils';
 
 /* HELPERS */
 
@@ -233,6 +234,18 @@ describe ( 'Proxy Watcher', () => {
       }, /reference.*watched object/i );
 
       Consts.IS_DEVELOPMENT = false;
+
+    });
+
+    it ( 'basic support for circular structures', t => {
+
+      const makeCircular = () => { const root = {}; root.root = {root}; return root; },
+            circular1 = makeCircular (),
+            circular2 = makeCircular ();
+
+      t.true ( Utils.isEqual ( circular1, circular2 ) );
+      t.true ( Utils.isEqual ( circular1, Utils.clone ( circular1 ) ) );
+      t.true ( Utils.isEqual ( circular1, Utils.cloneDeep ( circular1 ) ) );
 
     });
 

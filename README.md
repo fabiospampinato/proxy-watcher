@@ -19,7 +19,7 @@ The following functions are provided.
 ## Limitations
 
 - Mutations happening at locations that need to be reached via a [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) aren't detected, as a precise string path for them can't be generated (e.g. `{ [Symbol ()]: { unreachableViaStringPath: true }`).
-- Referencing the same object under multiple paths at the same time will throw an error. This is unsupported because the library can't lazily deeply watch the watched object safely when duplicate objects are used.
+- Referencing the same object under multiple paths at the same time will throw an error. This is not supported because the library can't lazily deeply watch the watched object safely when duplicate objects are used.
 - Referencing the watched object within itself will thrown an error.
 - A path is a dot-separated string of keys, therefore using only dots as your keys may lead to some weird paths generated that can't be parsed properly (e.g. `foo.....bar`, is that `foo/.../bar` or `foo/././bar`?)
 - Proxys will make certain operations even 100x slower on current engines, however those operations are simple things like property accesses which will almost never be your actual bottleneck, even with this kind of performance hit.

@@ -4,6 +4,7 @@
 import * as isPrimitive from 'is-primitive';
 import {CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
 import clone from './packages/clone';
+import cloneDeep from './packages/clone_deep';
 import isEqual from './packages/is_equal';
 
 /* UTILS */
@@ -11,6 +12,8 @@ import isEqual from './packages/is_equal';
 const Utils = {
 
   clone,
+
+  cloneDeep,
 
   isEqual,
 
