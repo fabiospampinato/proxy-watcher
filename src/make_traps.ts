@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import pp from 'path-prop';
 import {IS_DEVELOPMENT, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
 import makeProxy from './make_proxy';
 import getTarget from './target';
@@ -38,9 +39,9 @@ function makeTraps<Object> ( object: Object, callback: Callback ): Traps {
 
     if ( childPath === childPathPrev ) return;
 
-    if ( !childPathPrev ) return;
+    if ( !childPathPrev || !Object.is ( child, pp.get ( object, childPathPrev ) ) ) return;
 
-    throw new Error ( `Duplicate object encountered, previously at path "${childPathPrev}" and now at path "${childPath}", you either have multiple references to it or are moving it around. Duplicate objects in a watched object are not supported as this library would need to eagerly traverse the entire watched object in order to discover these duplicates so that it can properly infer all the paths that changed, this is too expensive so this library throws an error when duplicated sturctures are encountered.` );
+    throw new Error ( `Duplicate object encountered, the same object is being referenced both at path "${childPathPrev}" and at path "${childPath}". Duplicate objects in a watched object are not supported.` );
 
   }
 

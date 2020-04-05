@@ -180,7 +180,7 @@ describe ( 'Proxy Watcher', () => {
 
       Consts.IS_DEVELOPMENT = true;
 
-      const obj = { bool: true },
+      const obj = { bool: true, arr: [{}] },
             root = { foo: obj, bar: obj },
             data = makeData ( root );
 
@@ -193,6 +193,17 @@ describe ( 'Proxy Watcher', () => {
         data.proxy.bar.bool = true;
 
       }, /duplicate.*"foo".*"bar"/i );
+
+      data.proxy.foo.arr[0];
+      data.proxy.foo.arr.unshift ( true );
+      data.proxy.foo.arr[1];
+
+      t.throws ( () => {
+
+        data.proxy.foo.arr[0] = data.proxy.foo.arr[1];
+        data.proxy.foo.arr[0];
+
+      }, /duplicate.*"foo\.arr\.1".*"foo\.arr\.0"/i );
 
       Consts.IS_DEVELOPMENT = false;
 
