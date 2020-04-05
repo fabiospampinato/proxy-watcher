@@ -12,7 +12,6 @@ benchmark.defaultOptions = Object.assign ( benchmark.defaultOptions, {
   log: 'compact'
 });
 
-
 benchmark.group ( 'record', () => {
 
   benchmark ({

@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import {$IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
+import {IS_DEVELOPMENT, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
 import makeProxy from './make_proxy';
 import getTarget from './target';
 import Utils from './utils';
@@ -32,6 +32,20 @@ function makeTraps ( callback: Callback ): Traps {
 
   }
 
+  function checkChildPathDuplicate ( child: object, childPath: string ) {
+
+    const childPathPrev = paths.get ( child );
+
+    if ( childPath === childPathPrev ) return;
+
+    if ( !childPathPrev ) return;
+
+    throw new Error ( `Duplicate object encountered, previously at path "${childPathPrev}" and now at path "${childPath}", you either have multiple references to it or are moving it around. Duplicate objects in a watched object are not supported as this library would need to eagerly traverse the entire watched object in order to discover these duplicates so that it can properly infer all the paths that changed, this is too expensive so this library throws an error when duplicated sturctures are encountered.` );
+
+  }
+
+  }
+
   function getParentPath ( parent: object ): string {
 
     return paths.get ( parent ) || '';
@@ -49,7 +63,11 @@ function makeTraps ( callback: Callback ): Traps {
 
   function setChildPath ( parent: object, child: object, path: string | number ): void {
 
-    paths.set ( child, getChildPath ( parent, path ) );
+    const childPath = getChildPath ( parent, path );
+
+    if ( IS_DEVELOPMENT ) checkChildPathDuplicate ( child, childPath );
+
+    paths.set ( child, childPath );
 
   }
 

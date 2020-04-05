@@ -19,6 +19,7 @@ The following functions are provided.
 ## Limitations
 
 - Mutations happening at locations that need to be reached via a [Symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) aren't detected, as a precise string path for them can't be generated (e.g. `{ [Symbol ()]: { unreachableViaStringPath: true }`).
+- Referencing the same object under multiple paths will throw an error during development. This is unsupported because the library can't lazily deeply watch the watched object safely when duplicate objects are used.
 - A path is a dot-separated string of keys, therefore using only dots as your keys may lead to some weird paths generated that can't be parsed properly (e.g. `foo.....bar`, is that `foo/.../bar` or `foo/././bar`?)
 - Proxys will make certain operations even 100x slower on current engines, however those operations are simple things like property accesses which will almost never be your actual bottleneck, even with this kind of performance hit.
 - Proxys are un-polyfillable, if you have to support platforms that don't [support them](https://caniuse.com/#search=proxy) you can't use this library.

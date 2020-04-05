@@ -4,6 +4,7 @@
 import * as _ from 'lodash';
 import {describe} from 'ava-spec';
 import {watch, unwatch, record, target, isProxy} from '../dist';
+import * as Consts from '../dist/consts';
 
 /* HELPERS */
 
@@ -172,6 +173,28 @@ describe ( 'Proxy Watcher', () => {
       Object.defineProperty ( data.proxy, 'deep2', { configurable: true, value: { deeper: true } } );
 
       t.is ( data.nr, 1 );
+
+    });
+
+    it ( 'throws when duplicate structures are encountered', t => {
+
+      Consts.IS_DEVELOPMENT = true;
+
+      const obj = { bool: true },
+            root = { foo: obj, bar: obj },
+            data = makeData ( root );
+
+      data.proxy.foo.bool = false;
+
+      t.deepEqual ( data.paths, ['foo.bool'] );
+
+      t.throws ( () => {
+
+        data.proxy.bar.bool = true;
+
+      }, /duplicate.*"foo".*"bar"/i );
+
+      Consts.IS_DEVELOPMENT = false;
 
     });
 
