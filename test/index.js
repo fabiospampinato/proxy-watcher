@@ -198,6 +198,33 @@ describe ( 'Proxy Watcher', () => {
 
     });
 
+    it ( 'throws when referencing the root object', t => {
+
+      Consts.IS_DEVELOPMENT = true;
+
+      const root = {};
+
+      root.root = root;
+      root.deep = { root };
+
+      const data = makeData ( root );
+
+      t.throws ( () => {
+
+        data.proxy.root;
+
+      }, /reference.*watched object/i );
+
+      t.throws ( () => {
+
+        data.proxy.deep.root;
+
+      }, /reference.*watched object/i );
+
+      Consts.IS_DEVELOPMENT = false;
+
+    });
+
     it ( 'returns a disposer', t => {
 
       const obj = {

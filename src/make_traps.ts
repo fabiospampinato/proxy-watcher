@@ -9,7 +9,7 @@ import {Callback, Trap, Traps} from './types';
 
 /* MAKE TRAPS */
 
-function makeTraps ( callback: Callback ): Traps {
+function makeTraps<Object> ( object: Object, callback: Callback ): Traps {
 
   /* VARIABLES */
 
@@ -43,6 +43,12 @@ function makeTraps ( callback: Callback ): Traps {
     throw new Error ( `Duplicate object encountered, previously at path "${childPathPrev}" and now at path "${childPath}", you either have multiple references to it or are moving it around. Duplicate objects in a watched object are not supported as this library would need to eagerly traverse the entire watched object in order to discover these duplicates so that it can properly infer all the paths that changed, this is too expensive so this library throws an error when duplicated sturctures are encountered.` );
 
   }
+
+  function checkChildIsRoot ( child: any ) {
+
+    if ( child !== object ) return;
+
+    throw new Error ( `A reference to the whole watched object has been found at path "${paths.get ( child )}", this is unsupported.` );
 
   }
 
@@ -152,6 +158,8 @@ function makeTraps ( callback: Callback ): Traps {
       if ( typeof value === 'function' && Utils.isStrictlyImmutableMethod ( value ) ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
 
       setChildPath ( target, value, property );
+
+      if ( IS_DEVELOPMENT ) checkChildIsRoot ( value );
 
       const proxyCached = proxies.get ( value );
 

@@ -10,7 +10,7 @@ import {Callback, Traps} from './types';
 
 function makeProxy<Object> ( object: Object, callback: Callback, traps?: Traps ): Object {
 
-  traps = traps || makeTraps ( callback );
+  traps = traps || makeTraps ( object, callback );
 
   return new Proxy ( object, traps );
 
