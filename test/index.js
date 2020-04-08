@@ -210,6 +210,106 @@ describe ( 'Proxy Watcher', () => {
 
     });
 
+    it ( 'doesn\'t count prototype values as duplicates', t => {
+
+      Consts.IS_DEVELOPMENT = true;
+
+      const cls = class Foo { method () {} };
+
+      const makeObjs = () => [
+        false,
+        Boolean ( false ),
+        new Boolean ( false ),
+        3,
+        Number ( 3 ),
+        new Number ( 3 ),
+        3n,
+        BigInt ( 3n ),
+        'foo',
+        String ( 'foo' ),
+        new String ( 'foo' ),
+        Symbol (),
+        function fn () {},
+        new Date (),
+        /foo/i,
+        {},
+        [],
+        new ArrayBuffer ( 12 ),
+        new Int8Array ( new ArrayBuffer ( 24 ) ),
+        new Uint8Array ( new ArrayBuffer ( 24 ) ),
+        new Uint8ClampedArray ( new ArrayBuffer ( 24 ) ),
+        new Int16Array ( new ArrayBuffer ( 24 ) ),
+        new Uint16Array ( new ArrayBuffer ( 24 ) ),
+        new Int32Array ( new ArrayBuffer ( 24 ) ),
+        new Uint32Array ( new ArrayBuffer ( 24 ) ),
+        new Float32Array ( new ArrayBuffer ( 24 ) ),
+        new Float64Array ( new ArrayBuffer ( 24 ) ),
+        new BigInt64Array ( new ArrayBuffer ( 24 ) ),
+        new BigUint64Array ( new ArrayBuffer ( 24 ) ),
+        new Map (),
+        new WeakMap (),
+        new Set (),
+        new WeakSet (),
+        Promise.resolve ( 'foo' ),
+        new cls ()
+      ];
+
+      const properties = [
+        'toString',
+        'toString',
+        'toString',
+        'toFixed',
+        'toFixed',
+        'toFixed',
+        'toString',
+        'toString',
+        'toUpperCase',
+        'toUpperCase',
+        'toUpperCase',
+        Symbol.toPrimitive,
+        'call',
+        'toDateString',
+        'test',
+        'hasOwnProperty',
+        'forEach',
+        'slice',
+        'reduce',
+        'reduce',
+        'reduce',
+        'reduce',
+        'reduce',
+        'reduce',
+        'reduce',
+        'reduce',
+        'reduce',
+        'reduce',
+        'reduce',
+        'entries',
+        'entries',
+        'entries',
+        'entries',
+        'then',
+        'method'
+      ];
+
+      const data = makeData ({
+        one: makeObjs (),
+        two: makeObjs ()
+      });
+
+      properties.forEach ( ( property, index ) => {
+
+        data.proxy.one[index][property];
+        data.proxy.two[index][property];
+
+      });
+
+      t.pass ();
+
+      Consts.IS_DEVELOPMENT = false;
+
+    });
+
     it ( 'throws when referencing the root object', t => {
 
       Consts.IS_DEVELOPMENT = true;

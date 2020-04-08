@@ -72,7 +72,7 @@ function makeTraps<Object> ( object: Object, callback: Callback ): Traps {
 
     const childPath = getChildPath ( parent, path );
 
-    if ( IS_DEVELOPMENT ) checkChildPathDuplicate ( child, childPath );
+    if ( IS_DEVELOPMENT && Object.getPrototypeOf ( parent )[path] !== child ) checkChildPathDuplicate ( child, childPath );
 
     paths.set ( child, childPath );
 
