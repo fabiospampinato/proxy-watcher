@@ -227,7 +227,7 @@ function makeTraps<Object> ( object: Object, callback: Callback ): Traps {
 
       const isArray = Array.isArray ( thisArg );
 
-      if ( !isArray ) thisArg = thisArg[$TARGET];
+      if ( !isArray ) thisArg = getTarget ( thisArg );
 
       if ( stopped || ( isArray && Utils.isLooselyImmutableArrayMethod ( target ) ) ) return Reflect.apply ( target, thisArg, args );
 

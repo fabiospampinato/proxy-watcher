@@ -716,6 +716,12 @@ describe ( 'Proxy Watcher', () => {
 
         const data = makeData ({ fn: function () {} });
 
+        data.proxy.fn ();
+
+        const {fn} = data.proxy;
+
+        fn ();
+
         data.proxy.fn.length;
         data.proxy.fn.name;
         data.proxy.fn.displayName;
