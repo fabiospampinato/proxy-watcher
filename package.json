@@ -45,7 +45,7 @@
   "dependencies": {
     "is-primitive": "^3.0.1",
     "kind-of": "^6.0.3",
-    "path-prop": "^1.0.1"
+    "path-prop": "^1.1.0"
   },
   "devDependencies": {
     "@types/node": "^13.7.1",
