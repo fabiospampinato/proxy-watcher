@@ -227,12 +227,13 @@ function makeTraps<Object> ( object: Object, callback: Callback ): Traps {
 
       const isArray = Array.isArray ( thisArg );
 
-      if ( !isArray ) thisArg = getTarget ( thisArg );
-
       if ( stopped || ( isArray && Utils.isLooselyImmutableArrayMethod ( target ) ) ) return Reflect.apply ( target, thisArg, args );
 
-      const thisArgTarget = ( isArray ? thisArg[$TARGET] : thisArg ),
-            clone = Utils.clone ( thisArgTarget ),
+      const thisArgTarget = ( isArray ? thisArg[$TARGET] : getTarget ( thisArg ) );
+
+      if ( !isArray ) thisArg = thisArgTarget;
+
+      const clone = Utils.clone ( thisArgTarget ),
             result = Reflect.apply ( target, thisArg, args ),
             changed = !Utils.isEqual ( clone, thisArgTarget );
 
