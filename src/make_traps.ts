@@ -3,6 +3,7 @@
 
 import pp from 'path-prop';
 import {IS_DEVELOPMENT, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
+import isProxy from './is_proxy';
 import makeProxy from './make_proxy';
 import getTarget from './target';
 import Utils from './utils';
@@ -224,6 +225,8 @@ function makeTraps<Object> ( object: Object, callback: Callback ): Traps {
     }),
 
     apply: wrapTrap (( target, thisArg, args ) => {
+
+      if ( !isProxy ( thisArg ) ) return Reflect.apply ( target, thisArg, args );
 
       const isArray = Array.isArray ( thisArg );
 
