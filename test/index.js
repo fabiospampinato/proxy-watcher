@@ -788,7 +788,7 @@ describe ( 'Proxy Watcher', () => {
         data.proxy.arr.splice ( 0, 1, 2 );
         data.proxy.arr.unshift ( 5 );
 
-        t.is ( data.nr, 44 );
+        t.is ( data.nr, 10 );
         t.deepEqual ( data.paths, ['arr.0', 'arr', 'arr.0', 'arr.1', 'arr.2', 'arr.3', 'arr.4', 'arr.5', 'arr.6', 'arr.7', 'arr.8', 'arr.9', 'arr', 'arr.9', 'arr.length', 'arr', 'arr.9', 'arr.10', 'arr.11', 'arr', 'arr.0', 'arr.11', 'arr.1', 'arr.10', 'arr.2', 'arr.9', 'arr', 'arr.0', 'arr.1', 'arr.2', 'arr.11', 'arr.length', 'arr', 'arr.0', 'arr.1', 'arr', 'arr.0', 'arr', 'arr.11', 'arr.2', 'arr.1', 'arr.0', 'arr'] );
 
       });

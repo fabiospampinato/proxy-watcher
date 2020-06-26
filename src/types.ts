@@ -5,18 +5,23 @@ type Callback = ( paths: string[] ) => any;
 
 type Disposer<T> = () => T;
 
-type ProxyHandlers = Required<ProxyHandler<any>>;
+type TrapsHelpers = import ( './traps_helpers' ).default<any>;
 
-type Trap = ProxyHandlers['get'] | ProxyHandlers['set'] | ProxyHandlers['defineProperty'] | ProxyHandlers['deleteProperty'] | ProxyHandlers['apply'];
+type TrapGet = ( this: TrapsHelpers, target: any, property: PropertyKey, receiver: any ) => any;
+type TrapSet = ( this: TrapsHelpers, target: any, property: PropertyKey, value: any, receiver: any ) => boolean;
+type TrapDefineProperty = ( this: TrapsHelpers, target: any, property: PropertyKey, descriptor: PropertyDescriptor ) => boolean;
+type TrapDeleteProperty = ( this: TrapsHelpers, target: any, property: PropertyKey ) => boolean;
+type TrapApply = ( this: TrapsHelpers, target: any, thisArg: any, args?: any ) => any;
+type Trap = TrapGet | TrapSet | TrapDefineProperty | TrapDeleteProperty | TrapApply;
 
 type Traps = {
-  get: ProxyHandlers['get'],
-  set: ProxyHandlers['set'],
-  defineProperty: ProxyHandlers['defineProperty'],
-  deleteProperty: ProxyHandlers['deleteProperty'],
-  apply: ProxyHandlers['apply']
+  get: TrapGet,
+  set: TrapSet,
+  defineProperty: TrapDefineProperty,
+  deleteProperty: TrapDeleteProperty,
+  apply: TrapApply
 };
 
 /* EXPORT */
 
-export {Callback, Disposer, ProxyHandlers, Trap, Traps};
+export {Callback, Disposer, Trap, Traps};
