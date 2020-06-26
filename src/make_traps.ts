@@ -143,7 +143,7 @@ function makeTraps<Object> ( object: Object, callback: Callback ): Traps {
 
       }
 
-      if ( Utils.isBuiltinWithMutableMethods ( receiver ) ) receiver = receiver[$TARGET];
+      receiver = receiver[$TARGET] || receiver;
 
       if ( getPathsRecording && !getParentPath ( target ) ) getPaths.push ( property ); // We are only recording root paths, because I don't see a use case for recording deeper paths too
 
@@ -181,7 +181,7 @@ function makeTraps<Object> ( object: Object, callback: Callback ): Traps {
 
       if ( stopped || typeof property === 'symbol' ) return Reflect.set ( target, property, value );
 
-      if ( Utils.isBuiltinWithMutableMethods ( receiver ) ) receiver = receiver[$TARGET];
+      receiver = receiver[$TARGET] || receiver;
 
       const isValueUndefined = ( value === undefined ),
             didPropertyExist = isValueUndefined && Reflect.has ( target, property ),
