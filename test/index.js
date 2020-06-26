@@ -1021,6 +1021,32 @@ describe ( 'Proxy Watcher', () => {
 
       });
 
+      it ( 'custom class', t => {
+
+        class Custom {
+          map = new Map ([[ 'one', 1 ]]);
+          foo () {}
+        }
+
+        const data = makeData ({ custom: new Custom () });
+
+        t.is ( data.proxy.custom.constructor.name, 'Custom' );
+
+        data.proxy.custom.map.has ( 'foo' );
+        data.proxy.custom.map.set ( 'two', 2 );
+
+        t.is ( data.nr, 0 );
+
+        data.proxy.custom = data.proxy.custom;
+
+        t.is ( data.nr, 0 );
+
+        data.proxy.custom = new Custom ();
+
+        t.is ( data.nr, 1 );
+
+      });
+
     });
 
   });

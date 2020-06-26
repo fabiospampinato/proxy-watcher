@@ -57,12 +57,6 @@ const CONSTRUCTORS_MUTABLE = new Set<Function> ([ // "Array" should be included 
   Float64Array
 ]);
 
-const CONSTRUCTORS_UNSUPPORTED = new Set<Function> ([
-  Promise,
-  WeakMap,
-  WeakSet
-]);
-
 const CONSTRUCTORS_COMPARABLE = new Set<Function> ([
   Array,
   ArrayBuffer,
@@ -101,6 +95,18 @@ if ( typeof SharedArrayBuffer === 'function' ) {
   CONSTRUCTORS_IMMUTABLE.add ( SharedArrayBuffer );
 
 }
+
+const CONSTRUCTORS_SUPPORTED = new Set<Function> ([
+  ...CONSTRUCTORS_IMMUTABLE,
+  ...CONSTRUCTORS_MUTABLE,
+  ...CONSTRUCTORS_COMPARABLE
+]);
+
+const CONSTRUCTORS_UNSUPPORTED = new Set<Function> ([
+  Promise,
+  WeakMap,
+  WeakSet
+]);
 
 /* METHODS */ // We are assuming the following methods don't get messed up with, and custom methods with the same name that are mutating are not defined
 
@@ -178,4 +184,4 @@ const LOOSELY_IMMUTABLE_METHODS = { // These methods don't directly mutate the o
 
 /* EXPORT */
 
-export {IS_DEVELOPMENT, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_UNSUPPORTED, CONSTRUCTORS_COMPARABLE, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS};
+export {IS_DEVELOPMENT, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP, CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_COMPARABLE, CONSTRUCTORS_SUPPORTED, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS};

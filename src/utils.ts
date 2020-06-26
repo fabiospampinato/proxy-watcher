@@ -2,10 +2,11 @@
 /* IMPORT */
 
 import * as isPrimitive from 'is-primitive';
-import {CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
+import {CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_SUPPORTED, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
 import clone from './packages/clone';
 import cloneDeep from './packages/clone_deep';
 import isEqual from './packages/is_equal';
+import isNative from './packages/is_native';
 
 /* UTILS */
 
@@ -17,9 +18,13 @@ const Utils = {
 
   isEqual,
 
+  isNative,
+
   isObjectUnsupported: ( x: any ): boolean => { // It assumes `x` is an object
 
-    return CONSTRUCTORS_UNSUPPORTED.has ( x.constructor );
+    const {constructor} = x;
+
+    return !CONSTRUCTORS_SUPPORTED.has ( constructor ) && ( CONSTRUCTORS_UNSUPPORTED.has ( constructor ) || !isNative ( constructor ) );
 
   },
 
