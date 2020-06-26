@@ -17,19 +17,34 @@ const $GET_RECORD_STOP = Symbol ( 'Stop recording get paths' );
 
 /* CONSTRUCTORS */
 
+const CONSTRUCTORS_ERRORS = new Set<Function> ([
+  Error,
+  EvalError,
+  RangeError,
+  ReferenceError,
+  SyntaxError,
+  TypeError,
+  URIError
+]);
+
 const CONSTRUCTORS_IMMUTABLE = new Set<Function> ([
+  ...CONSTRUCTORS_ERRORS,
   ArrayBuffer,
   Boolean,
-  Error,
+  DataView,
   Number,
   RegExp,
   String,
   Symbol
 ]);
 
-const CONSTRUCTORS_MUTABLE = new Set<Function> ([ // "Array" should be included here, but then some tests will fail
+const CONSTRUCTORS_MUTABLE = new Set<Function> ([ // "Array" should be included here, but then some tests will fail //TODO: Add AsyncGeneratorFunction
+  (function* () {}).constructor,
+  (async function () {}).constructor,
   Date,
+  Function,
   Map,
+  Object,
   Set,
   Int8Array,
   Uint8Array,
@@ -78,6 +93,12 @@ if ( typeof BigInt === 'function' ) {
     CONSTRUCTORS_MUTABLE.add ( BigUint64Array );
     CONSTRUCTORS_COMPARABLE.add ( BigUint64Array );
   }
+
+}
+
+if ( typeof SharedArrayBuffer === 'function' ) {
+
+  CONSTRUCTORS_IMMUTABLE.add ( SharedArrayBuffer );
 
 }
 
