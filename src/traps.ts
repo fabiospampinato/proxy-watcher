@@ -8,6 +8,12 @@ import getTarget from './target';
 import Utils from './utils';
 import {Traps} from './types';
 
+/* DESTRUCTURING */
+
+const {isArray} = Array,
+      {apply, defineProperty, deleteProperty, get, getOwnPropertyDescriptor, has, set} = Reflect,
+      {clone, isBuiltinWithoutMutableMethods, isEqual, isLooselyImmutableArrayMethod, isObjectUnsupported, isStrictlyImmutableMethod} = Utils;
+
 /* TRAPS HELPERS */
 
 const Traps: Traps = {
@@ -16,30 +22,36 @@ const Traps: Traps = {
 
     if ( property === 'constructor' ) return target.constructor;
 
-    if ( property === $TARGET ) return target;
+    if ( typeof property === 'symbol' ) {
 
-    if ( property === $GET_RECORD_START ) return this.getPathsRecording = true;
+      if ( property === $TARGET ) return target;
 
-    if ( property === $GET_RECORD_STOP ) {
+      if ( property === $GET_RECORD_START ) return this.getPathsRecording = true;
 
-      const paths = this.getPaths;
+      if ( property === $GET_RECORD_STOP ) {
 
-      this.getPathsRecording = false;
-      this.getPaths = [];
+        const paths = this.getPaths;
 
-      return paths;
+        this.getPathsRecording = false;
+        this.getPaths = [];
 
-    }
+        return paths;
 
-    if ( property === $IS_PROXY ) return true;
+      }
 
-    if ( property === $STOP ) {
+      if ( property === $IS_PROXY ) return true;
 
-      this.stopped = true;
-      this.changedPaths = undefined as any; //TSC
-      this.paths = undefined as any; //TSC
+      if ( property === $STOP ) {
 
-      return target;
+        this.stopped = true;
+        this.changedPaths = undefined as any; //TSC
+        this.paths = undefined as any; //TSC
+
+        return target;
+
+      }
+
+      return get ( target, property, receiver );
 
     }
 
@@ -47,17 +59,17 @@ const Traps: Traps = {
 
     if ( this.getPathsRecording && !this.getParentPath ( target ) ) this.getPaths.push ( property as string ); // We are only recording root paths, because I don't see a use case for recording deeper paths too //TSC
 
-    const value = Reflect.get ( target, property, receiver );
+    const value = get ( target, property, receiver );
 
-    if ( Utils.isBuiltinWithoutMutableMethods ( value ) ) return value;
+    if ( isBuiltinWithoutMutableMethods ( value ) ) return value;
 
-    const descriptor = Reflect.getOwnPropertyDescriptor ( target, property );
+    const descriptor = getOwnPropertyDescriptor ( target, property );
 
     if ( descriptor && !descriptor.configurable && !descriptor.writable ) return value; // Preserving invariants
 
-    if ( this.stopped || typeof property === 'symbol' || Utils.isObjectUnsupported ( value ) ) return value;
+    if ( this.stopped || isObjectUnsupported ( value ) ) return value;
 
-    if ( typeof value === 'function' && Utils.isStrictlyImmutableMethod ( value ) ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
+    if ( typeof value === 'function' && isStrictlyImmutableMethod ( value ) ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
 
     this.setChildPath ( target, value, property );
 
@@ -79,15 +91,15 @@ const Traps: Traps = {
 
     value = getTarget ( value );
 
-    if ( this.stopped || typeof property === 'symbol' ) return Reflect.set ( target, property, value );
+    if ( this.stopped || typeof property === 'symbol' ) return set ( target, property, value );
 
     receiver = receiver[$TARGET] || receiver;
 
     const isValueUndefined = ( value === undefined ),
-          didPropertyExist = isValueUndefined && Reflect.has ( target, property ),
-          prev = Reflect.get ( target, property, receiver ),
-          result = Reflect.set ( target, property, value ),
-          changed = result && ( ( isValueUndefined && !didPropertyExist ) || !Utils.isEqual ( getTarget ( prev ), value ) );
+          didPropertyExist = isValueUndefined && has ( target, property ),
+          prev = get ( target, property, receiver ),
+          result = set ( target, property, value ),
+          changed = result && ( ( isValueUndefined && !didPropertyExist ) || !isEqual ( getTarget ( prev ), value ) );
 
     return changed ? this.triggerChange ( result, this.getChildPath ( target, property ) ) : result;
 
@@ -95,16 +107,16 @@ const Traps: Traps = {
 
   defineProperty ( target, property, descriptor ) {
 
-    if ( this.stopped || typeof property === 'symbol' ) return Reflect.defineProperty ( target, property, descriptor );
+    if ( this.stopped || typeof property === 'symbol' ) return defineProperty ( target, property, descriptor );
 
-    const prev = Reflect.getOwnPropertyDescriptor ( target, property ),
-          changed = Reflect.defineProperty ( target, property, descriptor );
+    const prev = getOwnPropertyDescriptor ( target, property ),
+          changed = defineProperty ( target, property, descriptor );
 
     if ( changed ) {
 
       const next = { configurable: false, enumerable: false, writable: false, ...descriptor }; // Accounting for defaults
 
-      if ( Utils.isEqual ( prev, next ) ) return true;
+      if ( isEqual ( prev, next ) ) return true;
 
     }
 
@@ -114,9 +126,9 @@ const Traps: Traps = {
 
   deleteProperty ( target, property ) {
 
-    if ( !Reflect.has ( target, property ) ) return true;
+    if ( !has ( target, property ) ) return true;
 
-    const changed = Reflect.deleteProperty ( target, property );
+    const changed = deleteProperty ( target, property );
 
     if ( this.stopped || typeof property === 'symbol' ) return changed;
 
@@ -126,19 +138,19 @@ const Traps: Traps = {
 
   apply ( target, thisArg, args ) {
 
-    if ( !isProxy ( thisArg ) ) return Reflect.apply ( target, thisArg, args );
+    if ( !isProxy ( thisArg ) ) return apply ( target, thisArg, args );
 
-    const isArray = Array.isArray ( thisArg );
+    const isArrayThis = isArray ( thisArg );
 
-    if ( this.stopped || ( isArray && Utils.isLooselyImmutableArrayMethod ( target ) ) ) return Reflect.apply ( target, thisArg, args );
+    if ( this.stopped || ( isArrayThis && isLooselyImmutableArrayMethod ( target ) ) ) return apply ( target, thisArg, args );
 
-    const thisArgTarget = ( isArray ? thisArg[$TARGET] : getTarget ( thisArg ) );
+    const thisArgTarget = ( isArrayThis ? thisArg[$TARGET] : getTarget ( thisArg ) );
 
-    if ( !isArray ) thisArg = thisArgTarget;
+    if ( !isArrayThis ) thisArg = thisArgTarget;
 
-    const clone = Utils.clone ( thisArgTarget ),
-          result = Reflect.apply ( target, thisArg, args ),
-          changed = !Utils.isEqual ( clone, thisArgTarget );
+    const cloned = clone ( thisArgTarget ),
+          result = apply ( target, thisArg, args ),
+          changed = !isEqual ( cloned, thisArgTarget );
 
     return changed ? this.triggerChange ( result, this.getParentPath ( thisArgTarget ) ) : result;
 

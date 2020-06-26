@@ -93,24 +93,24 @@ class TrapsHelpers<Object> {
 
   wrapTrap ( trap: Trap ): any { //TSC
 
-    const helpers = this;
+    const self = this;
 
     return function trapWrapper () {
 
-      helpers.trapDepth++;
+      self.trapDepth++;
 
-      const result = trap.apply ( helpers, arguments );
+      const result = trap.apply ( self, arguments );
 
-      helpers.trapDepth--;
+      self.trapDepth--;
 
-      if ( !helpers.trapDepth && helpers.changed && !helpers.stopped ) {
+      if ( !self.trapDepth && self.changed && !self.stopped ) {
 
-        const paths = helpers.changedPaths;
+        const paths = self.changedPaths;
 
-        helpers.changed = false;
-        helpers.changedPaths = [];
+        self.changed = false;
+        self.changedPaths = [];
 
-        helpers.callback ( paths );
+        self.callback ( paths );
 
       }
 
