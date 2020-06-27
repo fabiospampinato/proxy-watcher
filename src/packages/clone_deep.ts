@@ -1,13 +1,9 @@
 
-/* IMPORT */
-
-import * as typeOf from 'kind-of';
-
 /* HELPERS */
 
-const {from} = Buffer,
-      {create} = Object,
-      {valueOf} = Symbol.prototype;
+const {isArray} = Array;
+
+const CONSTRUCTORS_CLONABLE = new Set ([ Map, Set, Date, RegExp ]);
 
 const cloneDeepArray = ( val: any[], circularMap: Map<any, any> ): any[] => {
   const {length} = val;
@@ -58,41 +54,27 @@ const cloneDeepSet = ( val: Set<any>, circularMap: Map<any, any> ): Set<any> => 
 
 const cloneDeepNew = ( val: any, circularMap: Map<any, any> ): any => {
 
-  switch ( typeOf ( val ) ) {
-    case 'array':
-      return cloneDeepArray ( val, circularMap );
-    case 'object':
-      return cloneDeepObject ( val, circularMap );
-    case 'date':
-      return new Date ( val.getTime () );
-    case 'map':
-      return cloneDeepMap ( val, circularMap );
-    case 'set':
-      return cloneDeepSet ( val, circularMap );
-    case 'buffer':
-      return from ( val );
-    case 'symbol':
-      return Object ( valueOf.call ( val ) );
-    case 'arraybuffer':
-    case 'bigint64array':
-    case 'biguint64array':
-    case 'float32array':
-    case 'float64array':
-    case 'int16array':
-    case 'int32array':
-    case 'int8array':
-    case 'uint16array':
-    case 'uint32array':
-    case 'uint8clampedarray':
-    case 'uint8array':
-      return val.slice ( 0 );
-    case 'regexp':
-      return cloneRegExp ( val );
-    case 'error':
-      return create ( val );
-    default:
-      return val;
+  if ( typeof val !== 'object' || val === null ) return val;
+
+  if ( isArray ( val ) ) return cloneDeepArray ( val, circularMap );
+
+  if ( val.slice ) return val.slice ();
+
+  const {constructor} = val;
+
+  if ( CONSTRUCTORS_CLONABLE.has ( constructor ) ) {
+
+    if ( constructor === Map ) return cloneDeepMap ( val, circularMap );
+
+    if ( constructor === Set ) return cloneDeepSet ( val, circularMap );
+
+    if ( constructor === Date ) return new Date ( val.getTime () );
+
+    if ( constructor === RegExp ) return cloneRegExp ( val );
+
   }
+
+  return cloneDeepObject ( val, circularMap );
 
 };
 

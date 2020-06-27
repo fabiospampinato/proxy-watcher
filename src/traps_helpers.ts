@@ -1,7 +1,6 @@
 
 /* IMPORT */
 
-import pp from 'path-prop';
 import {IS_DEVELOPMENT} from './consts';
 import TrapsRaw from './traps';
 import {Callback, Trap, Traps} from './types';
@@ -51,7 +50,7 @@ class TrapsHelpers<Object> {
 
     if ( childPath === childPathPrev ) return;
 
-    if ( !childPathPrev || !Object.is ( child, pp.get ( this.object, childPathPrev ) ) ) return;
+    if ( !childPathPrev || !Object.is ( child, childPathPrev.split ( '.' ).reduce ( ( acc, key ) => acc[key] || {}, this.object ) ) ) return;
 
     throw new Error ( `Duplicate object encountered, the same object is being referenced both at path "${childPathPrev}" and at path "${childPath}". Duplicate objects in a watched object are not supported.` );
 
