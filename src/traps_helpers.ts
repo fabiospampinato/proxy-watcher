@@ -21,8 +21,8 @@ class TrapsHelpers<Object> {
   changedPaths: string[] = [];
   getPathsRecording: boolean = false;
   getPaths: string[] = [];
-  paths: WeakMap<object, string> = new WeakMap<object, string> ();
-  proxies: WeakMap<object, object> = new WeakMap<object, object> ();
+  paths: WeakMap<object, string> = new WeakMap ();
+  proxies: WeakMap<object, object> = new WeakMap ();
   trapDepth: number = 0;
 
   /* CONSTRUCTOR */

@@ -3,7 +3,6 @@
 
 import {IS_DEVELOPMENT, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
 import isProxy from './is_proxy';
-import makeProxy from './make_proxy';
 import getTarget from './target';
 import Utils from './utils';
 import {Traps} from './types';
@@ -11,8 +10,9 @@ import {Traps} from './types';
 /* DESTRUCTURING */
 
 const {isArray} = Array,
-      {apply, defineProperty, deleteProperty, get, getOwnPropertyDescriptor, has, set} = Reflect,
-      {clone, isBuiltinWithoutMutableMethods, isEqual, isLooselyImmutableArrayMethod, isObjectUnsupported, isStrictlyImmutableMethod} = Utils;
+      {getOwnPropertyDescriptor} = Object,
+      {apply, defineProperty, deleteProperty, get, set} = Reflect,
+      {clone, isEqual, isLooselyImmutableArrayMethod, isStrictlyImmutableMethod, isValueUnproxiable} = Utils;
 
 /* TRAPS HELPERS */
 
@@ -61,13 +61,11 @@ const Traps: Traps = {
 
     const value = get ( target, property, receiver );
 
-    if ( isBuiltinWithoutMutableMethods ( value ) ) return value;
+    if ( this.stopped || isValueUnproxiable ( value ) ) return value;
 
     const descriptor = getOwnPropertyDescriptor ( target, property );
 
     if ( descriptor && !descriptor.configurable && !descriptor.writable ) return value; // Preserving invariants
-
-    if ( this.stopped || isObjectUnsupported ( value ) ) return value;
 
     if ( typeof value === 'function' && isStrictlyImmutableMethod ( value ) ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
 
@@ -79,7 +77,7 @@ const Traps: Traps = {
 
     if ( proxyCached ) return proxyCached;
 
-    const proxy = makeProxy ( value, this.callback, this.traps );
+    const proxy = new Proxy ( value, this.traps );
 
     this.proxies.set ( value, proxy );
 
@@ -91,15 +89,16 @@ const Traps: Traps = {
 
     value = getTarget ( value );
 
-    if ( this.stopped || typeof property === 'symbol' ) return set ( target, property, value );
+    if ( this.stopped || typeof property === 'symbol' ) return set ( target, property, value, receiver );
 
     receiver = receiver[$TARGET] || receiver;
 
     const isValueUndefined = ( value === undefined ),
-          didPropertyExist = isValueUndefined && has ( target, property ),
-          prev = get ( target, property, receiver ),
-          result = set ( target, property, value ),
-          changed = result && ( ( isValueUndefined && !didPropertyExist ) || !isEqual ( getTarget ( prev ), value ) );
+          didPropertyExist = isValueUndefined && property in target,
+          isValueUndefinedNew = ( isValueUndefined && !didPropertyExist ),
+          prev = !isValueUndefinedNew && get ( target, property, receiver ),
+          result = set ( target, property, value, receiver ),
+          changed = result && ( isValueUndefinedNew || !isEqual ( prev, value ) );
 
     return changed ? this.triggerChange ( result, this.getChildPath ( target, property ) ) : result;
 
@@ -126,7 +125,7 @@ const Traps: Traps = {
 
   deleteProperty ( target, property ) {
 
-    if ( !has ( target, property ) ) return true;
+    if ( !( property in target ) ) return true;
 
     const changed = deleteProperty ( target, property );
 

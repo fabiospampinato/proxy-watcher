@@ -1,8 +1,7 @@
 
 /* IMPORT */
 
-import * as isPrimitive from 'is-primitive';
-import {CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_MUTABLE, CONSTRUCTORS_SUPPORTED, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
+import {CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_SUPPORTED, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
 import clone from './packages/clone';
 import cloneDeep from './packages/clone_deep';
 import isEqual from './packages/is_equal';
@@ -20,23 +19,17 @@ const Utils = {
 
   isNative,
 
-  isObjectUnsupported: ( x: any ): boolean => { // It assumes `x` is an object
+  isValueUnproxiable: ( x: any ): boolean => {
+
+    if ( x === null ) return true;
+
+    const type = typeof x;
+
+    if ( type !== 'object' && type !== 'function' ) return true;
 
     const {constructor} = x;
 
-    return !CONSTRUCTORS_SUPPORTED.has ( constructor ) && ( CONSTRUCTORS_UNSUPPORTED.has ( constructor ) || !isNative ( constructor ) );
-
-  },
-
-  isBuiltinWithoutMutableMethods: ( x: any ): boolean => {
-
-    return isPrimitive ( x ) || CONSTRUCTORS_IMMUTABLE.has ( x.constructor );
-
-  },
-
-  isBuiltinWithMutableMethods: ( x: any ): boolean => {
-
-    return x != null && CONSTRUCTORS_MUTABLE.has ( x.constructor );
+    return CONSTRUCTORS_IMMUTABLE.has ( constructor ) || ( !CONSTRUCTORS_SUPPORTED.has ( constructor ) && ( CONSTRUCTORS_UNSUPPORTED.has ( constructor ) || !isNative ( constructor ) ) );
 
   },
 
