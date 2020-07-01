@@ -6,6 +6,7 @@ import {describe} from 'ava-spec';
 import {watch, unwatch, record, target, isProxy} from '../dist';
 import * as Consts from '../dist/consts';
 import Utils from '../dist/utils';
+import Fixtures from '../tasks/fixtures';
 
 /* HELPERS */
 
@@ -346,6 +347,14 @@ describe ( 'Proxy Watcher', () => {
       t.true ( Utils.isEqual ( circular1, circular2 ) );
       t.true ( Utils.isEqual ( circular1, Utils.clone ( circular1 ) ) );
       t.true ( Utils.isEqual ( circular1, Utils.cloneDeep ( circular1 ) ) );
+
+    });
+
+    it ( 'has a basic diff function', t => {
+
+      const result = Utils.diff ( Fixtures.DIFF_A (), Fixtures.DIFF_B () );
+
+      t.true ( Utils.isEqual ( result, Fixtures.DIFF_RESULT () ) );
 
     });
 

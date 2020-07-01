@@ -4,6 +4,7 @@
 import {CONSTRUCTORS_IMMUTABLE, CONSTRUCTORS_SUPPORTED, CONSTRUCTORS_UNSUPPORTED, STRICTLY_IMMUTABLE_METHODS, LOOSELY_IMMUTABLE_METHODS} from './consts';
 import clone from './packages/clone';
 import cloneDeep from './packages/clone_deep';
+import diff from './packages/diff';
 import isEqual from './packages/is_equal';
 import isNative from './packages/is_native';
 
@@ -14,6 +15,8 @@ const Utils = {
   clone,
 
   cloneDeep,
+
+  diff,
 
   isEqual,
 

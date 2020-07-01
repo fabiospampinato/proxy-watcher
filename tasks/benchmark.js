@@ -2,13 +2,14 @@
 /* IMPORT */
 
 const {watch, unwatch, record, target, isProxy} = require ( '../dist' ),
-      {NOOP, OBJ} = require ( './fixtures' ),
+      {default: Utils} = require ( '../dist/utils' ),
+      {NOOP, OBJ, DIFF_A, DIFF_B} = require ( './fixtures' ),
       benchmark = require ( 'benchloop' );
 
 /* BENCHMARK */
 
 benchmark.defaultOptions = Object.assign ( benchmark.defaultOptions, {
-  iterations: 1500,
+  iterations: 1000,
   log: 'compact'
 });
 
@@ -548,6 +549,38 @@ benchmark.group ( 'delete', () => {
     },
     fn: ctx => {
       ctx.proxy.set.delete ( 1 );
+    }
+  });
+
+});
+
+benchmark.group ( 'Utils', () => {
+
+  benchmark ({
+    name: 'clone',
+    fn: () => {
+      Utils.clone ( OBJ () );
+    }
+  });
+
+  benchmark ({
+    name: 'cloneDeep',
+    fn: () => {
+      Utils.cloneDeep ( OBJ () );
+    }
+  });
+
+  benchmark ({
+    name: 'diff',
+    fn: () => {
+      Utils.diff ( DIFF_A, DIFF_B );
+    }
+  });
+
+  benchmark ({
+    name: 'isEqual',
+    fn: () => {
+      Utils.isEqual ( DIFF_A, DIFF_B );
     }
   });
 

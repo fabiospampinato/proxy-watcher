@@ -25,6 +25,69 @@ const OBJ = () => ({
   set: new Set ([ 1, 2, 3 ])
 });
 
+const CLS = new class {};
+
+const DIFF_A = () => ({
+  foo: {
+    bar: {
+      a: ['a', 'b'],
+      b: 2,
+      c: ['x', 'y'],
+      e: 100
+    }
+  },
+  buzz: 'world',
+  map: new Map ([[ 1, 1 ]]),
+  map2: new Map ([[ 1, 1 ]]),
+  cls: CLS,
+  cls2: new class {}
+});
+
+const DIFF_B = () => ({
+  foo: {
+    bar: {
+      a: ['a'],
+      b: 2,
+      c: ['x', 'y', 'z'],
+      d: 'Hello, world!',
+      f: 123
+    }
+  },
+  buzz: 'fizz',
+  map: new Map ([[ 1, 1 ]]),
+  map2: new Map ([[ 2, 2 ]]),
+  cls2: new class {}
+});
+
+const DIFF_RESULT = () => ({
+  added: {
+    'foo.bar.d': 'Hello, world!',
+    'foo.bar.f': 123,
+  },
+  deleted: {
+    'foo.bar.e': 100,
+    'cls': CLS
+  },
+  updated: {
+    'foo.bar.a': {
+      before: ['a', 'b'],
+      after: ['a']
+    },
+    'foo.bar.c': {
+      before: ['x', 'y'],
+      after: ['x', 'y', 'z']
+    },
+    'buzz': {
+      before: 'world',
+      after: 'fizz'
+    },
+    'map2': {
+      before: new Map ([[ 1, 1 ]]),
+      after: new Map ([[ 2, 2 ]])
+    }
+  }
+});
+
 /* EXPORT */
 
-module.exports = {NOOP, OBJ};
+module.exports = {NOOP, OBJ, DIFF_A, DIFF_B, DIFF_RESULT};
