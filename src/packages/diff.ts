@@ -57,8 +57,8 @@ const diff = ( a: any, b: any, prefix: string = '' ) => {
 
   } else if ( prefix ) {
 
-    const constructorA = a.constructor,
-          constructorB = b.constructor;
+    const constructorA = a && a.constructor,
+          constructorB = b && a.constructor;
 
     if ( !( constructorA && !CONSTRUCTORS_SUPPORTED.has ( constructorA ) && ( CONSTRUCTORS_UNSUPPORTED.has ( constructorA ) || !isNative ( constructorA ) ) ) && !( constructorB && !CONSTRUCTORS_SUPPORTED.has ( constructorB ) && ( CONSTRUCTORS_UNSUPPORTED.has ( constructorB ) || !isNative ( constructorB ) ) ) && !isEqual ( a, b ) ) {
 

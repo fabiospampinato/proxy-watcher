@@ -36,6 +36,7 @@ const DIFF_A = () => ({
       e: 100
     }
   },
+  primitive: 123,
   buzz: 'world',
   map: new Map ([[ 1, 1 ]]),
   map2: new Map ([[ 1, 1 ]]),
@@ -53,6 +54,7 @@ const DIFF_B = () => ({
       f: 123
     }
   },
+  primitive: null,
   buzz: 'fizz',
   map: new Map ([[ 1, 1 ]]),
   map2: new Map ([[ 2, 2 ]]),
@@ -76,6 +78,10 @@ const DIFF_RESULT = () => ({
     'foo.bar.c': {
       before: ['x', 'y'],
       after: ['x', 'y', 'z']
+    },
+    'primitive': {
+      before: 123,
+      after: null
     },
     'buzz': {
       before: 'world',
