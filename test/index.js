@@ -340,7 +340,7 @@ describe ( 'Proxy Watcher', () => {
 
     it ( 'basic support for circular structures', t => {
 
-      const makeCircular = () => { const root = {}; root.root = {root}; return root; },
+      const makeCircular = () => { const root = {}; root.root = {root, slice: {}}; return root; },
             circular1 = makeCircular (),
             circular2 = makeCircular ();
 

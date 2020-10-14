@@ -33,7 +33,7 @@ const clone = ( val: any ): any => {
 
   if ( typeof val !== 'object' || val === null ) return val;
 
-  if ( val.slice ) return val.slice ();
+  if ( typeof val.slice === 'function' ) return val.slice ();
 
   const {constructor} = val;
 

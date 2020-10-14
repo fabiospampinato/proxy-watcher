@@ -58,7 +58,7 @@ const cloneDeepNew = ( val: any, circularMap: Map<any, any> ): any => {
 
   if ( isArray ( val ) ) return cloneDeepArray ( val, circularMap );
 
-  if ( val.slice ) return val.slice ();
+  if ( typeof val.slice === 'function' ) return val.slice ();
 
   const {constructor} = val;
 
