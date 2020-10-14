@@ -7,6 +7,7 @@ import cloneDeep from './packages/clone_deep';
 import diff from './packages/diff';
 import isEqual from './packages/is_equal';
 import isNative from './packages/is_native';
+import isPlainObject from './packages/is_plain_object';
 
 /* UTILS */
 
@@ -21,6 +22,8 @@ const Utils = {
   isEqual,
 
   isNative,
+
+  isPlainObject,
 
   isValueUnproxiable: ( x: any ): boolean => {
 

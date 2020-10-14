@@ -4,20 +4,11 @@
 import {CONSTRUCTORS_SUPPORTED, CONSTRUCTORS_UNSUPPORTED} from '../consts';
 import isEqual from './is_equal';
 import isNative from './is_native';
+import isPlainObject from './is_plain_object';
 
 /* HELPERS */
 
-const {assign, getPrototypeOf, prototype} = Object;
-
-const isPlainObject = ( value: any ): boolean => {
-
-  if ( typeof value !== 'object' || value === null ) return false;
-
-  const proto = getPrototypeOf ( value );
-
-  return proto === null || proto === prototype;
-
-};
+const {assign} = Object;
 
 /* DIFF */
 
