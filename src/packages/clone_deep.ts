@@ -78,7 +78,7 @@ const cloneDeepNew = ( val: any, circularMap: Map<any, any> ): any => {
 
 };
 
-const cloneDeep = ( val: any, _circularMap?: Map<any, any> ): any => {
+const cloneDeep = <T> ( val: T, _circularMap?: Map<any, any> ): T => {
 
   const circularMap = _circularMap || new Map (), // Storing references to potentially circular objects
         circularClone = circularMap.get ( val );

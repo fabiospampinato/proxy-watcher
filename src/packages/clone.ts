@@ -29,7 +29,7 @@ const cloneSet = ( val: Set<any> ): Set<any> => {
 
 /* CLONE */
 
-const clone = ( val: any ): any => {
+const cloneNew = ( val: any ): any => {
 
   if ( typeof val !== 'object' || val === null ) return val;
 
@@ -50,6 +50,12 @@ const clone = ( val: any ): any => {
   }
 
   return assign ( {}, val );
+
+};
+
+const clone = <T> ( val: T ): T => {
+
+  return cloneNew ( val );
 
 };
 

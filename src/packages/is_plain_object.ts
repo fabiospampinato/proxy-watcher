@@ -5,7 +5,7 @@ const {getPrototypeOf, prototype} = Object;
 
 /* IS PLAIN OBJECT */
 
-const isPlainObject = ( value: any ): boolean => {
+const isPlainObject = ( value: any ): value is Record<any, any> => {
 
   if ( typeof value !== 'object' || value === null ) return false;
 
