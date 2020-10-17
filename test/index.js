@@ -1056,6 +1056,30 @@ describe ( 'Proxy Watcher', () => {
 
       });
 
+      it ( 'symbol functions', t => {
+
+        const data = makeData ({ arr: [{}], set: new Set ([ 1, 2, 3 ]) });
+
+        const arrClone = Array.from ( data.proxy.arr );
+
+        t.is ( data.nr, 0 );
+        t.deepEqual ( arrClone, [{}] );
+
+        const setArr = Array.from ( data.proxy.set );
+
+        t.is ( data.nr, 0 );
+        t.deepEqual ( setArr, [1, 2, 3] );
+
+        // for ( const item of data.proxy.arr ) {
+
+        //   item.foo = true;
+
+        // }
+
+        // t.is ( data.nr, 1 ); //FIXME
+
+      });
+
     });
 
   });

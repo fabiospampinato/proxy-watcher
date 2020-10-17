@@ -51,7 +51,11 @@ const Traps: Traps = {
 
       }
 
-      return get ( target, property, receiver );
+      const value = get ( target, property, receiver );
+
+      if ( typeof value === 'function' ) return value.bind ( target ); //FIXME: Binding here prevents the function to be potentially re-bounded later
+
+      return value;
 
     }
 
