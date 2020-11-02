@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import Applicator from './applicator';
 import {IS_DEVELOPMENT, $IS_PROXY, $TARGET, $STOP, $GET_RECORD_START, $GET_RECORD_STOP} from './consts';
 import isProxy from './is_proxy';
 import getTarget from './target';
@@ -12,7 +13,8 @@ import {Traps} from './types';
 const {isArray} = Array,
       {getOwnPropertyDescriptor} = Object,
       {apply, defineProperty, deleteProperty, get, set} = Reflect,
-      {clone, isEqual, isLooselyImmutableArrayMethod, isStrictlyImmutableMethod, isValueUnproxiable} = Utils;
+      {execute} = Applicator,
+      {isEqual, isLooselyImmutableArrayMethod, isStrictlyImmutableMethod, isValueUnproxiable} = Utils;
 
 /* TRAPS HELPERS */
 
@@ -151,9 +153,7 @@ const Traps: Traps = {
 
     if ( !isArrayThis ) thisArg = thisArgTarget;
 
-    const cloned = clone ( thisArgTarget ),
-          result = apply ( target, thisArg, args ),
-          changed = !isEqual ( cloned, thisArgTarget );
+    const [result, changed] = execute ( target, thisArg, thisArgTarget, args );
 
     return changed ? this.triggerChange ( result, this.getParentPath ( thisArgTarget ) ) : result;
 

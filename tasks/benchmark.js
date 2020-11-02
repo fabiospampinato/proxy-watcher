@@ -3,7 +3,7 @@
 
 const {watch, unwatch, record, target, isProxy} = require ( '../dist' ),
       {default: Utils} = require ( '../dist/utils' ),
-      {NOOP, OBJ, DIFF_A, DIFF_B} = require ( './fixtures' ),
+      {NOOP, OBJ, OBJ_HUGE, DIFF_A, DIFF_B} = require ( './fixtures' ),
       benchmark = require ( 'benchloop' );
 
 /* BENCHMARK */
@@ -502,6 +502,174 @@ benchmark.group ( 'set', () => {
       fn: ctx => {
         ctx.proxy.set.add ( 3 );
         ctx.proxy.set.delete ( 1 );
+        ctx.proxy.set.clear ();
+      }
+    });
+
+  });
+
+  benchmark.group.skip ( 'huge', () => {
+
+    benchmark ({
+      name: 'date:setDate',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.date.setDate ( 123 );
+      }
+    });
+
+    benchmark ({
+      name: 'array:copyWithin',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.copyWithin ( 0, 1, 2 );
+      }
+    });
+
+    benchmark ({
+      name: 'array:fill',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.fill ( 0 );
+      }
+    });
+
+    benchmark ({
+      name: 'array:pop',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.pop ();
+      }
+    });
+
+    benchmark ({
+      name: 'array:push',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.push ( -1 );
+      }
+    });
+
+    benchmark ({
+      iterations: 1,
+      name: 'array:reverse',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.reverse ();
+      }
+    });
+
+    benchmark ({
+      iterations: 1,
+      name: 'array:shift',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.shift ();
+      }
+    });
+
+    benchmark ({
+      iterations: 1,
+      name: 'array:sort',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.sort ();
+      }
+    });
+
+    benchmark ({
+      name: 'array:splice',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.splice ( 0, 1, 2 );
+      }
+    });
+
+    benchmark ({
+      iterations: 1,
+      name: 'array:unshift',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.arr.unshift ( 5 );
+      }
+    });
+
+    benchmark ({
+      name: 'map:set',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.map.set ( 1, 'foo' );
+      }
+    });
+
+    benchmark ({
+      name: 'map:delete',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.map.delete ( 1 );
+      }
+    });
+
+    benchmark ({
+      name: 'map:clear',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.map.clear ();
+      }
+    });
+
+    benchmark ({
+      name: 'set:add',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.set.add ( 3 );
+      }
+    });
+
+    benchmark ({
+      name: 'set:delete',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
+        ctx.proxy.set.delete ( 1 );
+      }
+    });
+
+    benchmark ({
+      name: 'set:clear',
+      before: ctx => {
+        ctx.proxy = watch ( OBJ_HUGE (), NOOP )[0];
+      },
+      fn: ctx => {
         ctx.proxy.set.clear ();
       }
     });

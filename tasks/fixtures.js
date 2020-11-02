@@ -1,4 +1,8 @@
 
+/* IMPORT */
+
+const _ = require ( 'lodash' );
+
 /* FIXTURES */
 
 const NOOP = () => {};
@@ -23,6 +27,13 @@ const OBJ = () => ({
   date: new Date (),
   map: new Map ([ ['1', 1], ['2', 2] ]),
   set: new Set ([ 1, 2, 3 ])
+});
+
+const OBJ_HUGE = () => ({
+  arr: _.range ( 0, 100000 ),
+  date: new Date (),
+  map: new Map ( _.range ( 0, 100000 ).map ( nr => [`${nr}`, nr] ) ),
+  set: new Set ( _.range ( 0, 100000 ) )
 });
 
 const CLS = new class {};
@@ -96,4 +107,4 @@ const DIFF_RESULT = () => ({
 
 /* EXPORT */
 
-module.exports = {NOOP, OBJ, DIFF_A, DIFF_B, DIFF_RESULT};
+module.exports = {NOOP, OBJ, OBJ_HUGE, DIFF_A, DIFF_B, DIFF_RESULT};

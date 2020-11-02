@@ -1,6 +1,8 @@
 
 /* TYPES */
 
+type Applicator<T> = ( method: Function, thisArg: T, thisArgTarget: T, args: any[] ) => [any, boolean];
+
 type Callback = ( paths: string[] ) => any;
 
 type Disposer<T> = () => T;
@@ -24,4 +26,4 @@ type Traps = {
 
 /* EXPORT */
 
-export {Callback, Disposer, Trap, Traps};
+export {Applicator, Callback, Disposer, Trap, Traps};
