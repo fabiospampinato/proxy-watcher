@@ -8,7 +8,8 @@ import {CONSTRUCTORS_UNSUPPORTED, CONSTRUCTORS_COMPARABLE} from '../consts';
 // This is basically a fork of "fast-deep-equal" but: "Object.is"-based, with support for uncomparable contructors, support for circular structures and slightly faster
 
 const {is, keys, prototype} = Object,
-      {hasOwnProperty, toString, valueOf} = prototype;
+      {hasOwnProperty, toString, valueOf} = prototype,
+      NodeConstructor = ( typeof Node === 'function' ) ? Node : undefined;
 
 const isEqual = ( a: any, b: any ): boolean => {
 
@@ -99,6 +100,7 @@ const isEqual = ( a: any, b: any ): boolean => {
       if ( CONSTRUCTORS_UNSUPPORTED.has ( constructor ) ) return a === b;
       if ( a.valueOf !== valueOf ) return a.valueOf () === b.valueOf ();
       if ( a.toString !== toString ) return a.toString () === b.toString ();
+      if ( NodeConstructor && ( a instanceof NodeConstructor ) ) return a === b;
 
       props = keys ( a );
       length = props.length;

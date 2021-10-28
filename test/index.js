@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import 'jsdom-global/register';
 import * as _ from 'lodash';
 import {describe} from 'ava-spec';
 import {watch, unwatch, record, target, isProxy} from '../dist';
@@ -1053,6 +1054,34 @@ describe ( 'Proxy Watcher', () => {
         data.proxy.custom = new Custom ();
 
         t.is ( data.nr, 1 );
+
+      });
+
+      it.only ( 'dom nodes', t => {
+
+        const comment = () => document.createComment ( '' );
+        const div = () => document.createElement ( 'div' );
+        const text = () => document.createTextNode ( '' );
+
+        const data = makeData ({ comment: comment (), div: div (), text: text () });
+
+        data.proxy.comment = data.proxy.comment;
+        data.proxy.div = data.proxy.div;
+        data.proxy.text = data.proxy.text;
+
+        t.is ( data.nr, 0 );
+
+        data.proxy.comment = comment ();
+
+        t.is ( data.nr, 1 );
+
+        data.proxy.div = div ();
+
+        t.is ( data.nr, 2 );
+
+        data.proxy.text = text ();
+
+        t.is ( data.nr, 3 );
 
       });
 
