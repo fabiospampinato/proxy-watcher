@@ -1057,7 +1057,7 @@ describe ( 'Proxy Watcher', () => {
 
       });
 
-      it.only ( 'dom nodes', t => {
+      it ( 'dom nodes', t => {
 
         const comment = () => document.createComment ( '' );
         const div = () => document.createElement ( 'div' );
