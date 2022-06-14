@@ -1,7 +1,7 @@
 
 /* CONSTS */
 
-const IS_DEVELOPMENT = ( typeof process === 'object' ) && ( process.env.NODE_ENV === 'development' );
+const IS_DEVELOPMENT = false; //TODO: temporarily disabled: ( typeof process === 'object' ) && ( process.env.NODE_ENV === 'development' );
 
 /* SYMBOLS */
 
