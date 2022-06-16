@@ -81,6 +81,13 @@ const isEqual = ( a: any, b: any ): boolean => {
 
         } else {
 
+          if ( constructor === ArrayBuffer ) {
+
+            a = new Uint8Array ( a );
+            b = new Uint8Array ( b );
+
+          }
+
           length = a['length'];
 
           if ( length !== b['length'] ) return false;
